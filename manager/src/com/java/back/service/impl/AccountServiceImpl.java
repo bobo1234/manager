@@ -1,6 +1,7 @@
 package com.java.back.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,6 +75,7 @@ public class AccountServiceImpl implements AccountService {
 		String address = Common.getIpAddress(request);
 		systemLog.setRequestIp(address);
 		accountDao.save(systemLog);
+		account.setTimestamp(new Date());//更新最后登录时间
 		return JSONReturn.buildSuccess("登录成功!");
 	}
 

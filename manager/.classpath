@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="E:/apache-tomcat-8.5.16-windows-x64/apache-tomcat-8.5.16/lib/catalina-ha.jar"/>
 	<classpathentry kind="lib" path="E:/apache-tomcat-8.5.16-windows-x64/apache-tomcat-8.5.16/lib/catalina-storeconfig.jar"/>
 	<classpathentry kind="lib" path="E:/apache-tomcat-8.5.16-windows-x64/apache-tomcat-8.5.16/lib/catalina-tribes.jar"/>
+	<classpathentry kind="con" path="com.genuitec.runtime.library/com.genuitec.generic_7.0"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
