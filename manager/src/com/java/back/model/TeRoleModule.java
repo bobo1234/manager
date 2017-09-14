@@ -1,19 +1,25 @@
 package com.java.back.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
- * TeRoleModule entity. @author MyEclipse Persistence Tools
+ * 角色菜单表
  */
 @Entity
 @Table(name = "te_role_module")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TeRoleModule implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;

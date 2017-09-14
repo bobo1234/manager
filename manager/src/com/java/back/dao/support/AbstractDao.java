@@ -45,6 +45,14 @@ public abstract class AbstractDao<T> {
 	public List<T> findAll() {
 		return findSession().createCriteria(getEntityClass()).list();
 	}
+	/**
+	 * 查询所有对象并放入二级缓存
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<T> findAlltoCache() {
+		return findSession().createCriteria(getEntityClass()).setCacheable(true).list();
+	}
 
 	/**
 	 * 根据参数查询对象
@@ -59,6 +67,17 @@ public abstract class AbstractDao<T> {
 	public T findUniqueByProperty(String pro, Object val) {
 		return (T) findSession().createCriteria(getEntityClass())
 				.add(Restrictions.eq(pro, val)).uniqueResult();
+	}
+	/**
+	 * 根据参数查询对象并放入二级缓存
+	 * @param pro
+	 * @param val
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public T findUniqueByPropertytoCache(String pro, Object val) {
+		return (T) findSession().createCriteria(getEntityClass())
+				.add(Restrictions.eq(pro, val)).setCacheable(true).uniqueResult();
 	}
 
 	/**

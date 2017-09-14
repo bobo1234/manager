@@ -43,6 +43,9 @@ function findListInfo() {
 			case 4: 
 				type='ADD'; 
 				break; 
+			case 5: 
+				type='LOGIN';
+				break; 
 			default:; 
 			} 
 			$("<tr></tr>")

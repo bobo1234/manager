@@ -31,7 +31,7 @@ public class RoleModuleDao extends AbstractDao<TeRoleModule> {
 		query.append("from TeRoleModule trm where exists");
 		query.append("(from TeAccountRole tar where tar.roleLabel = trm.roleLabel and tar.acctName = ?) and ");
 		query.append("trm.moduleCode in (" + analysisModuleArray(moduleCode) + ")");
-		return findSession().createQuery(query.toString()).setString(0, acctName).list();
+		return findSession().createQuery(query.toString()).setString(0, acctName).setCacheable(true).list();
 	}
 
 	public String analysisModuleArray(String[] modules) {

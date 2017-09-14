@@ -2,7 +2,7 @@ package com.java.back.constant;
 
 public enum MethodType {
 
-	FIND(1), DELETE(2), MODIFY(3), ADD(4);
+	FIND(1), DELETE(2), MODIFY(3), ADD(4),LOGIN(5);
 
 	private int id;
 

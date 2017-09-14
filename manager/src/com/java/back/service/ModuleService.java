@@ -7,9 +7,18 @@ import com.java.back.model.TeModule;
 import com.java.back.support.JSONReturn;
 
 public abstract interface ModuleService {
-
+	/**
+	 * 查询一级菜单
+	 * @param acctName
+	 * @return
+	 */
 	public abstract JSONReturn findMenu(String acctName);
-
+	/**
+	 * 获取二级菜单
+	 * @param moduleCode
+	 * @param acctName
+	 * @return
+	 */
 	public abstract JSONReturn findModuleParameter(String moduleCode, String acctName);
 
 	public abstract JSONReturn findBreadcrumb(String moduleCode);

@@ -59,7 +59,7 @@ public class ModuleServiceImpl implements ModuleService {
 			return JSONReturn.buildFailure(LoginState.UNLOGIN);
 		List<TeModule> moduleList = null;
 		if (teAccount.getAcctSuper())
-			moduleList = moduleDAO.findAll();
+			moduleList = moduleDAO.findAlltoCache();
 		else
 			moduleList = moduleDAO.findMgrModule(acctName);
 		if (CollectionUtils.isEmpty(moduleList))
@@ -70,7 +70,7 @@ public class ModuleServiceImpl implements ModuleService {
 	public JSONReturn findModuleParameter(String moduleCode, String acctName) {
 		// TODO Auto-generated method stub
 		Map<String, Object> map = new HashMap<String, Object>();
-		TeAccount teAccount = accountDao.findUniqueByProperty(
+		TeAccount teAccount = accountDao.findUniqueByPropertytoCache(
 				TeAccountField.ACCT_NAME, acctName);
 		if (CompareUtil.isEmpty(teAccount))
 			return JSONReturn.buildFailure(map);
@@ -82,7 +82,7 @@ public class ModuleServiceImpl implements ModuleService {
 			map.put("modify", teAccount.getAcctSuper() ? true : false);
 			return JSONReturn.buildSuccess(map);
 		}
-		TeModule teModule = moduleDAO.findUniqueByProperty(
+		TeModule teModule = moduleDAO.findUniqueByPropertytoCache(
 				TeModuleField.MODULE_CODE, moduleCode);
 		if (CompareUtil.isEmpty(teModule))
 			return JSONReturn.buildFailure("非法操作!");

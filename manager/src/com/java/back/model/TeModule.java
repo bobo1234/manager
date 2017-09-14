@@ -1,21 +1,30 @@
 package com.java.back.model;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * TeModule entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "te_module", uniqueConstraints = { @UniqueConstraint(columnNames = "modulePage"),
-		@UniqueConstraint(columnNames = "moduleCode"), @UniqueConstraint(columnNames = "moduleName") })
+@Table(name = "te_module", uniqueConstraints = {
+		@UniqueConstraint(columnNames = "modulePage"),
+		@UniqueConstraint(columnNames = "moduleCode"),
+		@UniqueConstraint(columnNames = "moduleName") })
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TeModule implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -35,7 +44,8 @@ public class TeModule implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public TeModule(String moduleName, String moduleCode, String moduleSuperCode, String modulePage, Integer moduleLevel) {
+	public TeModule(String moduleName, String moduleCode,
+			String moduleSuperCode, String modulePage, Integer moduleLevel) {
 		this.moduleName = moduleName;
 		this.moduleCode = moduleCode;
 		this.moduleSuperCode = moduleSuperCode;
@@ -45,9 +55,10 @@ public class TeModule implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "TeModule [moduleId:" + moduleId + ", timestamp:" + timestamp + ", moduleName:" + moduleName
-				+ ", moduleCode:" + moduleCode + ", moduleSuperCode:" + moduleSuperCode + ", modulePage:" + modulePage
-				+ ", moduleLevel:" + moduleLevel + "]";
+		return "TeModule [moduleId:" + moduleId + ", timestamp:" + timestamp
+				+ ", moduleName:" + moduleName + ", moduleCode:" + moduleCode
+				+ ", moduleSuperCode:" + moduleSuperCode + ", modulePage:"
+				+ modulePage + ", moduleLevel:" + moduleLevel + "]";
 	}
 
 	// Property accessors

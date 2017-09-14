@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.java.back.constant.AccountDeleteState;
 import com.java.back.constant.AccountInitPassword;
 import com.java.back.constant.AccountState;
+import com.java.back.constant.MethodType;
 import com.java.back.constant.PageConstant;
 import com.java.back.constant.SessionKey;
 import com.java.back.constant.TimeFormatConstant;
@@ -71,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
 		systemLog.setCreateDate(DateUtil.getAllDate());
 		systemLog.setMethod("login");
 		systemLog.setDescription("用户登录");
-		systemLog.setLogType(1);//操作类型
+		systemLog.setLogType(MethodType.LOGIN.getId());//操作类型(登录)
 		String address = Common.getIpAddress(request);
 		systemLog.setRequestIp(address);
 		accountDao.save(systemLog);
