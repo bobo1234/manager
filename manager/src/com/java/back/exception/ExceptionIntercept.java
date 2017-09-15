@@ -26,12 +26,24 @@ public class ExceptionIntercept implements Serializable {
 	 * @param response
 	 * @return
 	 */
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
+//	@ResponseBody
+//	@ResponseStatus(HttpStatus.OK)
+//	@ExceptionHandler({ Exception.class })
+//	public JSONReturn exception(Exception ex, HttpServletRequest request,
+//			HttpServletResponse response) {
+//		ex.printStackTrace();
+//		System.out.println("服务器报错信息:" + ex.getMessage());
+//		return JSONReturn.buildFailure("服务器错误!");
+//	}
+
+	/**
+	 * 用于处理异常的
+	 * @return
+	 */
 	@ExceptionHandler({ Exception.class })
-	public JSONReturn exception(Exception ex, HttpServletRequest request,
-			HttpServletResponse response) {
-		ex.printStackTrace();
-		return JSONReturn.buildFailure("服务器错误!");
+	public String exception(Exception e) {
+		System.out.println("错误信息:"+e.getMessage());
+		e.printStackTrace();
+		return "error/error";
 	}
 }

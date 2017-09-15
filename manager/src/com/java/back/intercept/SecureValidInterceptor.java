@@ -53,7 +53,6 @@ public class SecureValidInterceptor extends HandlerInterceptorAdapter {
 							.toString());
 			return false;
 		}
-
 		/**
 		 * 从数据库中获取当前账户是否存在, 如果不存在, 提示未登录
 		 */
