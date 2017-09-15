@@ -18,12 +18,20 @@ public class ExceptionIntercept implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * spring捕捉到的异常 在此进行处理
+	 * 
+	 * @param ex
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@ExceptionHandler({ Exception.class })
-	public JSONReturn exception(Exception ex, HttpServletRequest request, HttpServletResponse response) {
+	public JSONReturn exception(Exception ex, HttpServletRequest request,
+			HttpServletResponse response) {
 		ex.printStackTrace();
 		return JSONReturn.buildFailure("服务器错误!");
 	}
-
 }

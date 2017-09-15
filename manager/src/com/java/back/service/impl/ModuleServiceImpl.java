@@ -276,7 +276,7 @@ public class ModuleServiceImpl implements ModuleService {
 		int id = Integer.parseInt(getMaxId(
 				"select max(moduleId) from te_module ").toString());
 		module.setModuleId(id + 1);
-		System.out.println("菜单id:" +( id + 1));
+		System.out.println("菜单id:" + (id + 1));
 		if (module.getModuleLevel().equals(0)) {// 一级菜单
 			module.setModuleSuperCode("0");
 			Object object = getMaxId("select max(moduleCode) from te_module where moduleLevel=0");
@@ -324,10 +324,10 @@ public class ModuleServiceImpl implements ModuleService {
 		}
 		sql = "delete from te_module where moduleId"
 				+ StringUtil.formatEqual(id);
-		moduleDAO.executeBySql(sql,null);
+		moduleDAO.executeBySql(sql, null);
 		sql = "delete from te_role_module where moduleCode"
 				+ StringUtil.formatEqual(module.getModuleCode());
-		moduleDAO.executeBySql(sql,null);// 删除角色对应的权限菜单
+		moduleDAO.executeBySql(sql, null);// 删除角色对应的权限菜单
 		return JSONReturn.buildSuccess("删除成功");
 	}
 
@@ -372,10 +372,10 @@ public class ModuleServiceImpl implements ModuleService {
 	public String findByPage(String page) {
 		// TODO Auto-generated method stub
 		try {
-			System.out.println("页面url:"+page);
+			System.out.println("页面url:" + page);
 			TeModule teModule = moduleDAO.findUniqueByProperty(
 					TeModuleField.MODULE_PAGE, page);
-			System.out.println("菜单code:"+teModule.getModuleCode());
+			System.out.println("菜单code:" + teModule.getModuleCode());
 			return teModule.getModuleCode();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

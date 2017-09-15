@@ -24,6 +24,12 @@ public class RoleModuleDao extends AbstractDao<TeRoleModule> {
 				.setString(1, moduleCode).uniqueResult();
 	}
 
+	/**
+	 * 根据用户名称与菜单code计算是否有当前菜单的权限
+	 * @param moduleCode
+	 * @param acctName
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public List<TeRoleModule> findMySecureValid(String[] moduleCode, String acctName) {
 		// TODO Auto-generated method stub

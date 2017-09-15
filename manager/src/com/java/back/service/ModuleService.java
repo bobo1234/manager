@@ -26,7 +26,13 @@ public abstract interface ModuleService {
 	public abstract JSONReturn findAllModule(long roleId);
 
 	public abstract JSONReturn setRoleSecureValid(long rold, String code, int type, boolean add);
-
+	/**
+	 * 判断用户是否有权限
+	 * @param userName
+	 * @param code
+	 * @param type
+	 * @return
+	 */
 	public abstract boolean secureValid(String userName, String[] code, MethodType type);
 	/**
 	 * 新增菜单
