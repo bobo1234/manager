@@ -1,6 +1,10 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -32,15 +36,12 @@ h2{color:#0188DE; font-size:16px; padding:10px 0px 40px 0px;}
 <body>
 
 
-<div id="page" style="border-style:dashed;border-color:#e4e4e4;line-height:30px;background:url(sorry.png) no-repeat right;">
-	<h1>抱歉，系统出现500错误~</h1>
+<div id="page" style="border-style:dashed;border-color:#e4e4e4;line-height:30px;background:url(<%=basePath%>images/sorry.png) no-repeat right;">
+	<h1>抱歉，系统出现内部错误~</h1>
 	<h2>
-	 <% Exception ex = (Exception)request.getAttribute("exception"); %>
-    <H2>Exception: <%= ex.getMessage()%></H2>
-    <P/>
-    <% ex.printStackTrace(new java.io.PrintWriter(out)); %>
+	${mess }
 	</h2>
-	<font color="#666666">你请求访问的内容，暂时出现内部错误，我们建议你返回首页进行操作，谢谢！</font><br /><br />
+	<font color="#666666">你请求访问的内容，暂时出现内部错误，我们建议您返回首页进行操作，谢谢！</font><br /><br />
 	<div class="button">
 		<a href="index.html" title="进入首页" >进入首页</a>
 	</div>

@@ -309,7 +309,7 @@ BootstrapDialog.msg = function(message, type) {
 		closeabled : false,
 		backdrop : 'static'
 	}).open();
-	setTimeout("hidedg()", 1800);//隐藏弹窗信息
+	setTimeout("hidedg()", 1500);//隐藏弹窗信息
 };
 function hidedg() {
 	dg.close();
@@ -428,7 +428,7 @@ BootstrapDialog.showModel = function(eml) {
 						window.location.href = "./login.html";
 					}
 				});
-				setTimeout("hidedg()", 1800);//隐藏弹窗信息
+				setTimeout("hidedg()", 1500);//隐藏弹窗信息
 				return;
 			}
 		}

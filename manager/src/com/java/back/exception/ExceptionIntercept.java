@@ -2,16 +2,10 @@ package com.java.back.exception;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.http.HttpStatus;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-import com.java.back.support.JSONReturn;
+import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 public class ExceptionIntercept implements Serializable {
@@ -41,9 +35,11 @@ public class ExceptionIntercept implements Serializable {
 	 * @return
 	 */
 	@ExceptionHandler({ Exception.class })
-	public String exception(Exception e) {
-		System.out.println("错误信息:"+e.getMessage());
-		e.printStackTrace();
-		return "error/error";
+	public ModelAndView exception(Exception e) {
+		ModelAndView modelAndView=new ModelAndView();
+		System.out.println("错误信息--------------:"+e.getMessage());
+		modelAndView.addObject("mess", e.getMessage());
+		modelAndView.setViewName("error/error");
+		return modelAndView;
 	}
 }
