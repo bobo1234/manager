@@ -540,9 +540,15 @@ BootstrapDialog.showModel = function(eml) {
 		}
 		return val;
 	};
+	/**
+	 * 复选框的选中状态
+	 */
 	$.findChecked = function(val) {
 		return val ? " checked=true " : "";
 	};
+	/**
+	 * 下拉框的选中
+	 */
 	$.findOpeion = function(id, current) {
 		return id == current ? " selected=true " : "";
 	};

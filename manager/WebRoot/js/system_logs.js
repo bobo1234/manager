@@ -131,7 +131,7 @@ function findUserSelect(curDepartient, eml) {
 		if(!$.isSuccess(data)) return;
 		$.each(data.body, function(i,v){
 			$("<option "+analyzeSelect(v.acctId,curDepartient) +" value="+v.acctId+"></option>")
-			.append(v.acctNickname)
+			.append(v.acctName)
 			.appendTo(eml);
 		});
 	}); 

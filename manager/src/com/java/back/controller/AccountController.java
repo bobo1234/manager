@@ -90,7 +90,7 @@ public class AccountController extends AbstractController {
 
 	@ResponseBody
 	@RequestMapping(value = "findRole")
-	@SecureValid(code = "04001", desc = "获取所有角色", type = MethodType.MODIFY)
+	@SecureValid(code = "", desc = "获取所有角色", type = MethodType.FIND)
 	public JSONReturn findRole(@RequestParam String acctName) {
 		return accountService.findRole(acctName);
 	}

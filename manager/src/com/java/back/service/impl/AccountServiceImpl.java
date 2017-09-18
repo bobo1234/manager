@@ -225,7 +225,7 @@ public class AccountServiceImpl implements AccountService {
 			dto.setId(ro.getRoleId());
 			dto.setRoleName(ro.getRoleName());
 			dto.setOpt(CollectionUtils.isNotEmpty(accountRoleDao
-					.findByAcctNameAndRoleLabel(acctName, ro.getRoleLabel())));
+					.findByAcctNameAndRoleLabel(acctName, ro.getRoleLabel())));//前台页面的遍历是否选中状态
 			dto.setAcctName(acctName);
 			dtoList.add(dto);
 		}
