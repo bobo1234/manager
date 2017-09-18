@@ -43,7 +43,7 @@ h2{color:#0188DE; font-size:16px; padding:10px 0px 40px 0px;}
 	</h2>
 	<font color="#666666">你请求访问的内容，暂时出现内部错误，我们建议您返回首页进行操作，谢谢！</font><br /><br />
 	<div class="button">
-		<a href="index.html" title="进入首页" >进入首页</a>
+		<a href="<%=basePath%>index.html" title="进入首页" >进入首页</a>
 	</div>
 </div>
 
