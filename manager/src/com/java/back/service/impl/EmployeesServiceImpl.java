@@ -557,18 +557,18 @@ public class EmployeesServiceImpl implements EmployeesService {
 			throws IllegalStateException, IOException {
 		// TODO Auto-generated method stub
 		if (CompareUtil.isEmpty(imgFile) || imgFile.isEmpty())
-			return JSONReturn.buildFailure("上传头像失败, 文件不存在!");
+			return JSONReturn.buildFailure("上传图片失败, 文件不存在!");
 		if (imgFile.getSize() > PhoneImageSize.PHONE_IMAGE_SIZE)
-			return JSONReturn.buildFailure("上传头像失败, 文件过大!");
+			return JSONReturn.buildFailure("上传图片失败, 文件过大!");
 		String imgName = imgFile.getOriginalFilename();
 		String extensionName = imgName.substring(imgName.lastIndexOf('.'));
 		imgName = new Date().getTime() + extensionName;
 		String rootPath = request.getSession().getServletContext().getRealPath("");
-		File file = new File(rootPath + "/upload/phone/" + imgName);
+		File file = new File(rootPath + "/upload/img/" + imgName);
 		if (!file.exists())
 			file.mkdirs();
 		imgFile.transferTo(file);
-		return JSONReturn.buildSuccess("/upload/phone/" + imgName);
+		return JSONReturn.buildSuccess("/upload/img/" + imgName);
 	}
 
 	public JSONReturn findEmployeesRecord(long emplId) {

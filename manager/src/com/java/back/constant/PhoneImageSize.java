@@ -2,9 +2,9 @@ package com.java.back.constant;
 
 public class PhoneImageSize {
 
-	/*
-	 * 头像上传最大不操作1MB
+	/**
+	 * 图片上传最大不操作10MB
 	 */
-	public static final int PHONE_IMAGE_SIZE = 1024 * 1000;
+	public static final int PHONE_IMAGE_SIZE = 1024 * 10000;
 
 }

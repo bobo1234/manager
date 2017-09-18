@@ -68,7 +68,8 @@ public class SupportController extends AbstractController {
 	public JSONReturn exit(HttpSession httpSession, HttpServletRequest request) {
 		return accountService.exit(httpSession,request);
 	}
-
+	
+	@SecureValid(code = "", desc = "用户修改密码", type = MethodType.MODIFY)
 	@ResponseBody
 	@RequestMapping(value = "mdoifyPass")
 	public JSONReturn mdoifyPass(@RequestParam String password, HttpSession httpSession) {
@@ -95,7 +96,14 @@ public class SupportController extends AbstractController {
 	public JSONReturn findPositionByDeptId(@RequestParam long deptId) {
 		return positionService.findPositionByDeptId(deptId);
 	}
-
+	/**
+	 * 上传图片接口
+	 * @param imgFile
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@ResponseBody
 	@RequestMapping(value = "uploadImg")
 	public Map<String, Object> uploadImg(MultipartFile imgFile, HttpServletRequest request, HttpServletResponse response)
