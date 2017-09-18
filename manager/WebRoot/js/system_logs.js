@@ -46,7 +46,8 @@ function findListInfo() {
 			case 5: 
 				type='LOGIN';
 				break; 
-			default:; 
+			default:
+				type='EXIT'; 
 			} 
 			$("<tr></tr>")
 			.append($("<td></td>").append(i+1))
@@ -76,25 +77,45 @@ function findListInfo() {
  */
 function analyzeBtns(v){
 	var btns = "";
+	btns += secure.find ? "<button type='button' class='btn btn-info btn-xs' onclick='showDetails(\"" + v.id + "\")'><span class='glyphicon glyphicon-menu-left'></span>详情</button>" : "";
 	btns += secure.del ? "<button type='button' class='btn btn-danger btn-xs' onclick='hintDelete(\""+v.id+"\")'><span class='glyphicon glyphicon-remove'></span>删除</button>" : "" ;
 	return btns;
 }
-/*
+/**
  * 显示窗口
- *  
+ * @param id
  */
-function showModifyBox(id){
-	$('.empty').removeClass('empty');
+function showDetails(id){
 	if(!id) return;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/position/findPositionById', {id:id}, function(data){
+	$.getJSON('mgr/findLogById', {id:id}, function(data){
 		dialog.close();
-		if(!$.isSuccess(data)) return;
-		position.id = data.body.poId;
-		findDepartmentSelect(data.body.poDepartment, $('select.modifyDeptList'));
-		$('input.modifyName').val(data.body.poName);
-		$('textarea.modifyDesc').val(data.body.poDescription);
-		BootstrapDialog.showModel($('div.modify-box'));
+		if (!$.isSuccess(data)) return;
+		
+		setValueForForm(data.body);
+		var type="";
+		switch(data.body.logType) 
+		{ 
+		case 1: 
+			type='FIND'; 
+		break; 
+		case 2: 
+			type='DELETE'; 
+		break; 
+		case 3: 
+			type='MODIFY'; 
+			break; 
+		case 4: 
+			type='ADD'; 
+			break; 
+		case 5: 
+			type='LOGIN';
+			break; 
+		default:
+			type='EXIT'; 
+		}
+		$('.logType').text(type);
+		BootstrapDialog.showModel($('div.details-box'));
 	});
 }
 
@@ -116,26 +137,19 @@ function findUserSelect(curDepartient, eml) {
 	}); 
 }
 
-/*
- *  
+/**
+ * 默认
+ * @param id
+ * @param curDepartient
+ * @returns
  */
 function analyzeSelect(id, curDepartient){
 	return curDepartient > 0 && id == curDepartient ? " selected=true " : "" ;
 }
-/*
- * 显示添加窗口
- *  
- */
-function showAddBox(){
-	$('.empty').removeClass('empty');
-	$('input.addName').val("");
-	$('textarea.addDesc').val("");
-	findDepartmentSelect(0, $('select.addDeptList'));
-	BootstrapDialog.showModel($('div.add-box'));
-}
-/*
+
+/**
  * 提示并确定删除日志
- *  
+ * @param id
  */
 function hintDelete(id){
 	if(!id) return;

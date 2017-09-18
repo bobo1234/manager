@@ -21,7 +21,17 @@ public class LogController extends AbstractController {
 
 	@Autowired
 	private SystemLogService systemLogService;
-
+	/**
+	 * 分页显示
+	 * @param page
+	 * @param Logtype
+	 * @param beginTime
+	 * @param endTime
+	 * @param acctId
+	 * @param des
+	 * @param httpSession
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "findLogListInfo")
 	public JSONReturn findLogListInfo(@RequestParam int page,
@@ -47,7 +57,12 @@ public class LogController extends AbstractController {
 	public JSONReturn deleteLog(@RequestParam String id) {
 		return systemLogService.deleteLog(id);
 	}
-
+	
+	/**
+	 * 查询详情
+	 * @param id
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "findLogById")
 	public JSONReturn findLogById(@RequestParam String id) {

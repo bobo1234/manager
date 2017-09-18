@@ -69,23 +69,30 @@
             </div>
         </div>
         
-        <div class="modal fade modify-box sm-modal">
+        <div class="modal fade details-box sm-modal">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<div class="modal-header"><h4 class="modal-title">查看日志信息</h4></div>
+					<div class="modal-header"><h4 class="modal-title">操作日志详情</h4></div>
 					<div class="modal-body">
-						<select class="form-control dept-select modifyDeptList"></select>
-						<input type="text" class="form-control margin-top-15 name-input modifyName" placeholder="职位名称" maxlength="64" />
-						<textarea class="form-control margin-top-15 resize float-left modifyDesc" rows="3" placeholder="职位简介" maxlength="128"></textarea>
-						<div class="clear"></div>
+						<table class="table table-bordered table-striped">
+							<tr><td class="si-key">ID: </td><td class="id"></td></tr>
+							<tr><td class="si-key">方法: </td><td class="method"></td></tr>
+							<tr><td class="si-key">描述: </td><td class="description"></td></tr>
+							<tr><td class="si-key">IP: </td><td class="requestIp"></td></tr>
+							<tr><td class="si-key">时间: </td><td class="createDate"></td></tr>
+							<tr><td class="si-key">类型: </td><td class="logType"></td></tr>
+							<tr><td class="si-key">参数: </td><td class="params"></td></tr>
+							<tr><td class="si-key">操作人: </td><td class="createByUserName"></td></tr>
+						</table>
 					</div> 
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="button" class="btn btn-primary" onclick="modifyPosition()">修改</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 					</div>
 				</div>
 			</div>
-		</div>
+       </div>
+       
+       
 		<div class="modal fade" id="modifyPassword" tabindex="-1" role="dialog" aria-labelledby="modifyPasswordLabel" aria-hidden="true">
 			<div class="modal-dialog" style="width:400px;"><div class="modal-content"></div></div>
 		</div>

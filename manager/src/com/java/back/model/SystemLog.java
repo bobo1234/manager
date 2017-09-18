@@ -1,10 +1,14 @@
 package com.java.back.model;
 
+import java.beans.Transient;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -37,6 +41,8 @@ public class SystemLog extends BaseBean {
 	private String params;
 
 	private Long createByUser;// 操作人id
+	
+	private String createByUserName;// 操作人名称
 
 	private String createDate;// 时间
 
@@ -138,6 +144,14 @@ public class SystemLog extends BaseBean {
 		this.createDate = createDate;
 	}
 
+
+	public String getCreateByUserName() {
+		return createByUserName;
+	}
+
+	public void setCreateByUserName(String createByUserName) {
+		this.createByUserName = createByUserName;
+	}
 
 	public SystemLog() {
 		super();

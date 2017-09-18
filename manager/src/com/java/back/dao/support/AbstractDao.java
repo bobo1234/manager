@@ -22,16 +22,17 @@ public abstract class AbstractDao<T> {
 	private SessionFactory sessionFactory;
 
 	public abstract Class<T> getEntityClass();
+
 	/**
-	 * 设置当前时间 
-	 * <br/>
+	 * 设置当前时间 <br/>
 	 * 格式:2016-05-27 21:45:30
+	 * 
 	 * @return
 	 */
-	public Date setDate(){
+	public Date setDate() {
 		return DateUtil.StrToTime(DateUtil.getAllDate());
 	}
-	
+
 	public Session findSession() {
 		return sessionFactory.getCurrentSession();
 	}
@@ -45,13 +46,16 @@ public abstract class AbstractDao<T> {
 	public List<T> findAll() {
 		return findSession().createCriteria(getEntityClass()).list();
 	}
+
 	/**
 	 * 查询所有对象并放入二级缓存
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> findAlltoCache() {
-		return findSession().createCriteria(getEntityClass()).setCacheable(true).list();
+		return findSession().createCriteria(getEntityClass())
+				.setCacheable(true).list();
 	}
 
 	/**
@@ -68,8 +72,10 @@ public abstract class AbstractDao<T> {
 		return (T) findSession().createCriteria(getEntityClass())
 				.add(Restrictions.eq(pro, val)).uniqueResult();
 	}
+
 	/**
 	 * 根据参数查询对象并放入二级缓存
+	 * 
 	 * @param pro
 	 * @param val
 	 * @return
@@ -77,7 +83,8 @@ public abstract class AbstractDao<T> {
 	@SuppressWarnings("unchecked")
 	public T findUniqueByPropertytoCache(String pro, Object val) {
 		return (T) findSession().createCriteria(getEntityClass())
-				.add(Restrictions.eq(pro, val)).setCacheable(true).uniqueResult();
+				.add(Restrictions.eq(pro, val)).setCacheable(true)
+				.uniqueResult();
 	}
 
 	/**
@@ -224,8 +231,10 @@ public abstract class AbstractDao<T> {
 		int parseInt = Integer.parseInt(query.uniqueResult().toString());
 		return parseInt;
 	}
+
 	/**
 	 * 根据hql查询条
+	 * 
 	 * @param hql
 	 * @return
 	 */
@@ -348,6 +357,20 @@ public abstract class AbstractDao<T> {
 	public T get(Serializable id) {
 		// TODO Auto-generated method stub
 		return (T) findSession().get(getEntityClass(), id);
+	}
+
+	/**
+	 * 根据主键获取单个对象
+	 * 
+	 * @param id
+	 * @param t
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getModel(Serializable id, Class<T> beanCalss) {
+		// TODO Auto-generated method stub
+		T bean = (T) findSession().get(beanCalss, id);
+		return bean;
 	}
 
 	/**

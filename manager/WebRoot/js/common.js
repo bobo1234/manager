@@ -112,6 +112,150 @@ ajax.json.post=function(url,content){
 };
 
 
+//封装的一些方法
+var com = {};
+
+com.json = function(str){
+    try {
+        return eval("(" + str + ");");
+    } 
+    catch (e) {
+        return null;
+    }
+};
+/**
+ * 清除输入框值以及选框的选中状态
+ */
+com.clear = function(){
+	var a=$("#form1 :input");    
+	for(var i=0;i<a.length;i++){ 
+		if(a[i].type=='radio'||a[i].type=='checkbox'){
+			$("[name='"+a[i].name+"']").prop("checked", false);
+		}else{
+			a[i].value='';
+		}
+	}
+};
+//隐藏某元素（id:需要显示的元素的id属性值）
+com.show = function(id){
+    com.id(id).style.display = 'block';
+};
+
+//显示某元素（id:需要隐藏的元素的id属性值）
+com.hide = function(id){
+    com.id(id).style.display = 'none';
+};
+com.RegExps = {};
+com.RegExps.isNumber = /^[-\+]?\d+(\.\d+)?$/;
+com.RegExps.isEmail = /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)/;
+com.RegExps.isPhone = /^((\(\d{2,3}\))|(\d{3}\-))?(\(0\d{2,3}\)|0\d{2,3}-)?[1-9]\d{6,7}(\-\d{1,4})?$/;
+com.RegExps.isMobile = /^((\(\d{2,3}\))|(\d{3}\-))?13\d{9}$/;
+com.RegExps.isIdCard = /(^\d{15}$)|(^\d{17}[0-9Xx]$)/;
+com.RegExps.isMoney = /^\d+(\.\d+)?$/;
+com.RegExps.isZip = /^[1-9]\d{5}$/;
+com.RegExps.isQQ = /^[1-9]\d{4,10}$/;
+com.RegExps.isInt = /^[-\+]?\d+$/;
+com.RegExps.isEnglish = /^[A-Za-z]+$/;
+com.RegExps.isChinese = /^[\u0391-\uFFE5]+$/;
+com.RegExps.isUrl = /^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/;
+com.RegExps.isDate = /^\d{4}-\d{1,2}-\d{1,2}$/;
+com.RegExps.isTime = /^\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2}$/;
+/**
+ * 校验数据
+ */
+com.RegExps.verify=function(value,reg){
+	return reg.test(value);
+};
+
+/**
+ * 获取当前日期
+ * @return
+ */
+function getDate(){
+	var date=new Date();
+	var year=date.getFullYear();
+	var month=date.getMonth()+1;
+	year=year.toString();
+	month=month.toString();
+	return year+"-"+(month.length<2?'0'+month:month)+"-01";
+};
+/**
+ * 普通的创建下拉框
+ * @param curDepartient 默认值
+ * @param pkid 数据集主键id
+ * @param pname 数据集名称
+ * @param eml 页面元素
+ * @param method 请求方法
+ * @param tip 友好提示
+ */
+function createSel(curDepartient,pkid,pname, eml,method,tip) {
+	eml.empty().append("<option value=''>"+tip+"</option>");
+	$.getJSON(method, function(data) {
+		if(!$.isSuccess(data)) return;
+		$.each(data.body, function(i,v){
+			$("<option "+analyzeSelect(v.pkid,curDepartient) +" value="+v.pkid+"></option>")
+			.append(v.pname)
+			.appendTo(eml);
+		});
+	}); 
+}; 
+
+function analyzeSelect(id, curDepartient){
+	return curDepartient > 0 && id == curDepartient ? " selected=true " : "" ;
+}
+
+/**
+ * 通用的大弹窗表单循环赋值方法
+ * @param json
+ * @return
+ */
+function setValueForForm(json) {
+	var a=$(".details-box table td");    
+	for(var i=0;i<a.length;i++){ 
+//		var iname=a[i].name;
+		var iname=a[i].className;
+		for(var key in json)
+		{
+		    if (iname==key) {
+		    	a[i].innerText=json[key];
+			}
+		}
+		 
+//		if(a[i].type=='radio'||a[i].type=='checkbox'){
+//			 var boxes = document.getElementsByName(iname);
+//			 for(var j=0;j<boxes.length;j++){
+//				 if(boxes[j].value == json[iname]){
+//		                boxes[j].checked = true;
+//		           }
+//			    }
+//			if(a[i].value==json[iname]){//单选框
+//		        a[i].checked = true;
+//			}else{
+//				 a[i].checked = false;
+//			}
+//		}else{
+//			a[i].value=json[iname];
+//		}
+	}
+};
+
+/**
+ * 通用页面查询
+ */
+function commonSearch(requestUrl){
+	$.ajax({
+		url: requestUrl+"?type=1",
+	    async: false,
+	    data:$("#searchForm").serialize(),
+	    success: function(data) {
+	    	$("#dataList").html(data);
+	    }
+	});
+};
+
+
+
+
 $(document).keydown(function(e){//屏蔽回退键
     e = window.event || e;
     var code = e.keyCode || e.which;

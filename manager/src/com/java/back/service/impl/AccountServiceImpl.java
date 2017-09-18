@@ -69,8 +69,10 @@ public class AccountServiceImpl implements AccountService {
 				account.getAcctId());
 		SystemLog systemLog=new SystemLog();
 		systemLog.setCreateByUser(account.getAcctId());
+		systemLog.setCreateByUserName(account.getAcctName());
 		systemLog.setCreateDate(DateUtil.getAllDate());
 		systemLog.setMethod("login");
+		systemLog.setParams(name+"---"+pass);
 		systemLog.setDescription("用户登录");
 		systemLog.setLogType(MethodType.LOGIN.getId());//操作类型(登录)
 		String address = Common.getIpAddress(request);
@@ -109,6 +111,7 @@ public class AccountServiceImpl implements AccountService {
 		systemLog.setDescription("用户登出");
 		String address = Common.getIpAddress(request);
 		systemLog.setRequestIp(address);
+		systemLog.setCreateByUserName(acctName);
 		accountDao.save(systemLog);
 		httpSession.removeAttribute(SessionKey.MODULEACCTNAME);// 从session里移除用户名和id
 		httpSession.removeAttribute(SessionKey.acctId);
