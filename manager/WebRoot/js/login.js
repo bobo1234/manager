@@ -1,6 +1,11 @@
 var moduleCode = '-1';
+var webSocket;
 function initFun(){};
 $(function() {
+	 if(!window.WebSocket){
+		 	$('td.hint-msg').text("某些功能不支持,建议使用谷歌内核的浏览器");
+	    }
+	 
 	$('div#login-modal').modal({
 		keyboard : false,
 		backdrop : false
@@ -31,14 +36,15 @@ function login() {
 		resetVerifyCode();
 	}, 'json');
 	// 验证表单, 发送ajax请求, 用户登录, 页面盅
-}
+};
+
 function reset() {
 	$('input.username').val('');
 	$('input.password').val('');
 	$('input.verify').val('');
 	// 重新请求验证码图片
 	resetVerifyCode();
-}
+};
 function resetVerifyCode(){
 	$('img.login-verify-img').attr('src', './mgr/0/findVerifydCode?'+new Date().getTime());
 }

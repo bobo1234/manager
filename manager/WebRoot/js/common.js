@@ -3,6 +3,7 @@ var page = 1; // 默认页面
 var dialog = null;
 var moduleCode = "";
 var curRoleId;
+var webSocket;//通信
 
 var type = {};
 type.FIND = 1;
@@ -12,6 +13,7 @@ type.ADD = 4;
 
 
 $(function() {
+	
 	var url = window.location.pathname;
 	var purl = window.location.href;
 	if(url.indexOf('html')!=-1&&purl.indexOf('?')==-1){
@@ -24,10 +26,14 @@ $(function() {
 			moduleCode=data.body;
 		}
 	}
-	
-	if (moduleCode >= 0)
-		findMenu(moduleCode, initFun);
+	if(moduleCode>=0){
+		connect('admin');//连接
+
+		
+		findMenu(moduleCode, initFun);//页面菜单权限判断
 		$('td.table-val').css('padding', '5px');
+	}
+	
 //		$('input.date-before').on('click', function() {
 //			WdatePicker({
 //				maxDate : '%y-%M-{%d}'
@@ -323,6 +329,7 @@ function exit() {
 		$.getJSON('mgr/exit', function(data) {
 			if (!$.isSuccess(data))
 				return;
+			webSocket.close();			
 			window.location.href = "./login.html";
 		});
 	});
@@ -590,4 +597,59 @@ BootstrapDialog.showModel = function(eml) {
 		return data.head;
 	};
 })(jQuery);
+
+
+/**
+ * websocket连接
+ */
+function connect(username) {
+	var strFullPath = window.document.location.href;
+	strFullPath= strFullPath.substring(7,strFullPath.lastIndexOf('/'));
+	webSocket = new WebSocket(
+			"ws://"+strFullPath+"/socketservice/" + username);
+	webSocket.onopen = function(event) {
+		console.log("连接建立成功！");
+		webSocket.send("A||||B");
+	};
+	//接收消息
+	webSocket.onmessage = function(event) {
+		receiveMess(event.data);
+	};
+	webSocket.onerror = function(event) {
+		alert(event.data);
+	};
+
+	webSocket.onclose = function()
+	{ 
+		console.log("连接已关闭..."); 
+	};
+};
+
+//处理接收的消息
+function receiveMess(data) {
+	if (data.indexOf("||||")!=-1) {
+		var yh=data.split("||||")[1];
+		console.log(eval(yh));
+//		document.getElementById("yh").innerHTML=eval(yh);
+	}else{
+//		document.getElementById("list").innerHTML += "<br/>"
+//			+ event.data;
+	}
+	
+}
+function sendMessage() {
+	if(webSocket == null) {
+		alert("请先连接后再发送消息");
+		return;
+	}
+	var msg = document.getElementById("textarea").value;
+	if(msg == "") {
+		alert("消息内容不能为空");
+		return;
+	}
+	var sd=$("#sd").val();
+	msg=sd+"||||"+msg;
+	document.getElementById("textarea").value = "";
+	webSocket.send(msg);
+}
 
