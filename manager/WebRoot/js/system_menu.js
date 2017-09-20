@@ -9,9 +9,9 @@ type.ADD = 4;
 
 var menu = {};
 function initFun() {
-	getMenu();
 	if(secure.find){
 		dialog = BootstrapDialog.loading();
+		getMenu();
 	}
 	if(!secure.add)
 		$('button.add-btn').remove();

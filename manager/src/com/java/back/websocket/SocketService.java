@@ -13,10 +13,10 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
-import com.java.back.utils.JsonUtil;
+import net.sf.json.JSONObject;
 
 /**
- * 单独发送
+ * websocket
  * 
  * @author gyb
  * 
@@ -38,45 +38,43 @@ public class SocketService {
 	public void onMessage(String message, Session session,
 			@PathParam(value = "userName") String userName) throws Exception {
 		System.out.println("用户" + userName + "说：" + message + "。");
-		System.out.println("当前在线人数：" + sessionMap.size());
-		String sd = message.split("\\|\\|\\|\\|")[0];
-		String mes = message.split("\\|\\|\\|\\|")[1];
-		System.out.println("给谁发的:" + sd);
-		
-		if (sd.length()!=0) {
-			if (sd.contains("A")) {
-				System.out.println("------通知所有人上线------");
-				if (userName.equals(mes)) {//退出
-					sessionMap.remove(userName);
-				}
+		String mes = message.split("\\|\\|\\|\\|")[1];// 消息
+		if (message.length() > 0) {
+			if (message.startsWith("[join]")) {// 上线
+				checkLogin(mes,session);
+				sendAdminLogin(mes);
+			} else if (message.startsWith("[logout]")) {// 下线
+				sendAdminLoginOut(mes);
+			} else if (message.startsWith("[getUserlist]")) {// 用户列表
+				userList();
+			} else if (message.startsWith("[ALL]")) {// 发送消息
 				sendAll();
-			}else {
-				Session value = sessionMap.get(sd);
-				if (value == null) {
-					System.out.println("-------没有该用户-----");
-					session.getBasicRemote().sendText("没有用户");// 提示信息
-				} else {
-					if (value.isOpen()) {
-						value.getBasicRemote().sendText(userName + ":" + mes);
-						session.getBasicRemote().sendText(userName + ":" + mes);
-					}
-				}
 			}
-		}else {
-			System.out.println("-----发送所有人------");
-			for (String key : sessionMap.keySet()) {
-				Session value = sessionMap.get(key);
-				if (value.isOpen()) {
-					value.getBasicRemote().sendText(userName + ":" + mes);
-				}
-			}
+
 		}
-		
-		
-	
+
+		// Session value = sessionMap.get(sd);
+		// if (value == null) {
+		// System.out.println("-------没有该用户-----");
+		// session.getBasicRemote().sendText("没有用户");// 提示信息
+		// } else {
+		// if (value.isOpen()) {
+		// value.getBasicRemote().sendText(userName + ":" + mes);
+		// session.getBasicRemote().sendText(userName + ":" + mes);
+		// }
+		// }
+
+		// else {
+		// System.out.println("-----发送所有人------");
+		// for (String key : sessionMap.keySet()) {
+		// Session value = sessionMap.get(key);
+		// if (value.isOpen()) {
+		// value.getBasicRemote().sendText(userName + ":" + mes);
+		// }
+		// }
+		// }
 
 	}
-
 
 	/**
 	 * 打开连接事件
@@ -86,13 +84,87 @@ public class SocketService {
 	@OnOpen
 	public void onOpen(Session session,
 			@PathParam(value = "userName") String userName) throws Exception {
-		System.out.println("打开连接成功！");
-		sessionMap.put(userName, session);
-		System.out.println("用户" + userName + "进来了。。。");
+		 System.out.println("打开连接成功！");
+		// sessionMap.put(userName, session);
+		 System.out.println("用户" + userName + "进来了。。。");
+		// System.out.println("当前在线人数：" + sessionMap.size());
+	}
+
+	/**
+	 * 检查登录
+	 * 
+	 * @param username
+	 * @throws IOException
+	 */
+	private void checkLogin(String username, Session session)
+			throws IOException {
+		Session value = sessionMap.get(username);
+		if (value == null) {
+			sessionMap.put(username, session);
+		} else {//下线
+			JSONObject result = new JSONObject();
+			result.element("type", "goOut");
+			result.element("mess", "goOut");
+			session.getBasicRemote().sendText(result.toString());
+		}
 		System.out.println("当前在线人数：" + sessionMap.size());
-	}	
+	}
+
+	/**
+	 * 通知管理员有人下线
+	 * 
+	 * @throws IOException
+	 */
+	private void sendAdminLoginOut(String username) throws IOException {
+		Session value = sessionMap.get("admin");
+		if (value != null) {
+			if (value.isOpen()) {
+				JSONObject result = new JSONObject();
+				result.element("type", "user_leave");
+				result.element("mess", username);
+				value.getBasicRemote().sendText(result.toString());
+			}
+		}
+	}
+
+	/**
+	 * 通知管理员有人上线啦
+	 * 
+	 * @throws IOException
+	 */
+	private void sendAdminLogin(String username) throws IOException {
+		Session value = sessionMap.get("admin");
+		if (value != null) {
+			if (value.isOpen()) {
+				JSONObject result = new JSONObject();
+				result.element("type", "user_join");
+				result.element("mess", username);
+				value.getBasicRemote().sendText(result.toString());
+			}
+		}
+	}
+
+	/**
+	 * 获取用户列表
+	 * 
+	 * @throws IOException
+	 */
+	private void userList() throws IOException {
+		Set<String> set = sessionMap.keySet();
+		Session value = sessionMap.get("admin");
+		if (value != null) {
+			if (value.isOpen()) {
+				JSONObject result = new JSONObject();
+				result.element("type", "user_list");
+				result.element("mess", set);
+				value.getBasicRemote().sendText(result.toString());
+			}
+		}
+	}
+
 	/**
 	 * 通知所有人
+	 * 
 	 * @throws IOException
 	 */
 	private void sendAll() throws IOException {
@@ -100,7 +172,10 @@ public class SocketService {
 		for (String key : sessionMap.keySet()) {
 			Session value = sessionMap.get(key);
 			if (value.isOpen()) {
-				value.getBasicRemote().sendText("A||||"+JsonUtil.setTojson(set));
+				JSONObject result = new JSONObject();
+				result.element("type", "user_join");
+				result.element("mess", set);
+				value.getBasicRemote().sendText(result.toString());
 			}
 
 		}

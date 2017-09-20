@@ -5,6 +5,7 @@ var moduleCode = "";
 var curRoleId;
 var webSocket;//通信
 
+
 var type = {};
 type.FIND = 1;
 type.DELETE = 2;
@@ -26,12 +27,10 @@ $(function() {
 			moduleCode=data.body;
 		}
 	}
-	if(moduleCode>=0){
-		connect('admin');//连接
-
-		
-		findMenu(moduleCode, initFun);//页面菜单权限判断
+	if(moduleCode>=0){//页面菜单权限判断
+		findMenu(moduleCode, initFun);
 		$('td.table-val').css('padding', '5px');
+//		connect();//连接websocket
 	}
 	
 //		$('input.date-before').on('click', function() {
@@ -311,6 +310,7 @@ function findModuleParameter(moduleCode, initFun) {
 			$('title').text(
 					data.body.moduleName + ' - ' + data.body.superModuleName);
 		}
+		
 		initFun();
 	});
 }
@@ -329,7 +329,7 @@ function exit() {
 		$.getJSON('mgr/exit', function(data) {
 			if (!$.isSuccess(data))
 				return;
-			webSocket.close();			
+//			webSocket.close();		
 			window.location.href = "./login.html";
 		});
 	});
@@ -599,45 +599,95 @@ BootstrapDialog.showModel = function(eml) {
 })(jQuery);
 
 
+
 /**
  * websocket连接
  */
-function connect(username) {
+function connect() {
+	var username=ajax.json.get("mgr/getSessionUser").body;
+	if(username==null||username==""){
+		console.log("未登录--");
+		return;
+	}
+	var flag=ajax.json.get("mgr/getSessionFlag");
+	if (flag=="1"){
+		console.log("已经启动");
+		return webSocket;
+	}
+	var url="";
+	if (window.location.protocol == 'http:') {
+		url = 'ws://';
+	} else {
+		url = 'wss://';
+	}
 	var strFullPath = window.document.location.href;
 	strFullPath= strFullPath.substring(7,strFullPath.lastIndexOf('/'));
-	webSocket = new WebSocket(
-			"ws://"+strFullPath+"/socketservice/" + username);
-	webSocket.onopen = function(event) {
-		console.log("连接建立成功！");
-		webSocket.send("A||||B");
-	};
-	//接收消息
-	webSocket.onmessage = function(event) {
-		receiveMess(event.data);
-	};
-	webSocket.onerror = function(event) {
-		alert(event.data);
-	};
+	if (window.WebSocket) {//浏览器支持的话
+		webSocket = new WebSocket(
+				url+strFullPath+"/socketservice/" + username);
+		
+		webSocket.onopen = function(event) {
+			ajax.json.post("mgr/setSessionFlag", username);
+			console.log("连接建立成功！");
+			webSocket.send("[join]||||"+username);
+		};
+		//接收消息
+		webSocket.onmessage = function(event) {
+			receiveMess(event.data);
+		};
+		webSocket.onerror = function(event) {
+			alert(event.data);
+		};
 
-	webSocket.onclose = function()
-	{ 
-		console.log("连接已关闭..."); 
-	};
-};
-
-//处理接收的消息
-function receiveMess(data) {
-	if (data.indexOf("||||")!=-1) {
-		var yh=data.split("||||")[1];
-		console.log(eval(yh));
-//		document.getElementById("yh").innerHTML=eval(yh);
-	}else{
-//		document.getElementById("list").innerHTML += "<br/>"
-//			+ event.data;
+//		webSocket.onclose = function()
+//		{ 
+//			console.log("连接已关闭..."); 
+//		};
 	}
 	
+};
+
+//处理接收的消息(json格式)
+function receiveMess(data) {
+	var message = JSON.parse(data);
+	if (message.type == 'message') {//消息
+		
+	}else if(message.type == 'goOut'){
+		alert("此用户在其它终端已经早于您登录,您暂时无法登录");
+		return;
+//		goOut();
+	}else if(message.type == 'goOut'){
+//		$("body").html("");
+//		goOut("您被系统管理员强制下线");
+	}else  if (message.type == 'user_list') {//在线用户
+		
+	}else if (message.type == 'user_join') {//用户上线
+//		userlist = message.list;
+	} else if (message.type == 'user_leave') {//用户下线
+		
+	}
+	
+};
+
+//用户列表
+var userlist = "";
+function getUserlist(){
+	websocket.send('[getUserlist]||||A');
+	return userlist;
+};
+
+//强制下线
+function goOut(){
+	var strFullPath = window.document.location.href;
+	strFullPath= strFullPath.substring(0,strFullPath.lastIndexOf('/'));
+	location.href=strFullPath+"/mgr/exit";
+	location.href='login.html';
 }
-function sendMessage() {
+
+/**
+ * 给所有人发送消息
+ */
+function sendAllMessage() {
 	if(webSocket == null) {
 		alert("请先连接后再发送消息");
 		return;
@@ -647,9 +697,15 @@ function sendMessage() {
 		alert("消息内容不能为空");
 		return;
 	}
-	var sd=$("#sd").val();
-	msg=sd+"||||"+msg;
+	msg="[ALL]||||"+msg;
 	document.getElementById("textarea").value = "";
 	webSocket.send(msg);
-}
+};
 
+/**
+ * 用户退出
+ */
+function logOut() {
+	var msg="[logout]||||A";
+	webSocket.send(msg);
+};

@@ -1,10 +1,10 @@
 var moduleCode = '-1';
-var webSocket;
 function initFun(){};
 $(function() {
 	 if(!window.WebSocket){
 		 	$('td.hint-msg').text("某些功能不支持,建议使用谷歌内核的浏览器");
 	    }
+	 
 	 
 	$('div#login-modal').modal({
 		keyboard : false,
@@ -22,6 +22,7 @@ function login() {
 	var verify = $.verifyForm($('input.verify'), true);
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.loading();
+	
 	$.post('mgr/0/acctLogin', {
 		name : username,
 		pass : password,

@@ -28,7 +28,14 @@ public class TeNotice extends BaseBean {
 	private String createtime;
 	private String forwhom;//给谁看(1:管理人员,2:会员)
 	private long browsetimes;//浏览次数
+	private long ifdele;//是否作废
 	
+	public long getIfdele() {
+		return ifdele;
+	}
+	public void setIfdele(long ifdele) {
+		this.ifdele = ifdele;
+	}
 	public String getForwhom() {
 		return forwhom;
 	}

@@ -38,6 +38,7 @@
       <param-value>classpath:spring-*.xml</param-value>
     </init-param>
   </servlet>
+ 
   <servlet-mapping>
     <servlet-name>spring</servlet-name>
     <url-pattern>/mgr/*</url-pattern>
