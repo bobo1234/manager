@@ -1,5 +1,4 @@
-//var moduleCode = '04003';
-var curRoleId;
+var moduleCode = '0';
 
 function initFun() {
 	
@@ -47,21 +46,8 @@ function analyzeBtns(v) {
 	btns += secure.del ? "<button type='button' class='btn btn-danger btn-xs' onclick='hintDelete(" + v.deptId + ")'><span class='glyphicon glyphicon-remove'></span>删除</button>" : "";
 	return btns;
 }
-/*
- * 设置部门经理 
- *  
- */
-function setPrincipal() {
-	$.getJSON('mgr/department/setPrincipal', {
-		deptId : departmentId,
-		emplId : $('select.principal-list').val()
-	}, function(data) {
-		if (!$.isSuccess(data)) return;
-		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
-		BootstrapDialog.hideModel($('div.set-principal-box'));
-		findListInfo();
-	});
-}
+
+
 /*
  * 提示并确定删除部门信息 
  *  

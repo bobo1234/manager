@@ -369,18 +369,18 @@ public class ModuleServiceImpl implements ModuleService {
 		return JSONReturn.buildSuccess(module);
 	}
 
-	public String findByPage(String page) {
+	public JSONReturn findByPage(String page) {
 		// TODO Auto-generated method stub
 		try {
 			System.out.println("页面url:" + page);
 			TeModule teModule = moduleDAO.findUniqueByProperty(
 					TeModuleField.MODULE_PAGE, page);
 			System.out.println("菜单code:" + teModule.getModuleCode());
-			return teModule.getModuleCode();
+			return JSONReturn.buildSuccess(teModule.getModuleCode());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 		}
-		return "";
+		return JSONReturn.buildFailureWithEmptyBody();
 	}
 
 }

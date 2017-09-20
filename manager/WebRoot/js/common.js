@@ -4,7 +4,7 @@ var dialog = null;
 var moduleCode = "";
 var curRoleId;
 var webSocket;//通信
-
+var localhostUrl="";
 
 var type = {};
 type.FIND = 1;
@@ -17,35 +17,27 @@ $(function() {
 	
 	var url = window.location.pathname;
 	var purl = window.location.href;
-	if(url.indexOf('html')!=-1&&purl.indexOf('?')==-1){
-		var page = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('html')+4); //页面的地址,不带后面参数
-		if(page!='index.html'&&page!='login.html'&&page!=''){
+	var m="/manager/";
+	url=url.substring(m.length,url.length);
+	if(purl.indexOf('?')==-1){
+//		url = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('html')+4); //页面的地址,不带后面参数
+		if(url!='index.html'&&url!='login.html'){
 			//根据页面地址获取菜单的code
-			var data=ajax.json.get("mgr/findByPage?page="+page);
-			if (!$.isSuccess(data))//未登录
+			localhostUrl="http://"+window.location.host+m;
+			var data=ajax.json.get(localhostUrl+"mgr/findByPage?page="+url);
+			if (!$.isSuccess(data))//未找到菜单的code
 				return;
 			moduleCode=data.body;
 		}
 	}
+	
 	if(moduleCode>=0){//页面菜单权限判断
 		findMenu(moduleCode, initFun);
 		$('td.table-val').css('padding', '5px');
 //		connect();//连接websocket
 	}
 	
-//		$('input.date-before').on('click', function() {
-//			WdatePicker({
-//				maxDate : '%y-%M-{%d}'
-//			});
-//		});
-//		$('input.date-after').on('click', function() {
-//			WdatePicker({
-//				minDate : '%y-%M-{%d}'
-//			});
-//		});
-//		$('input.date').on('click', function() {
-//			WdatePicker();
-//		});
+	
 });
 /**
  * 原生ajax方法封装
@@ -286,7 +278,7 @@ $(document).keydown(function(e){//屏蔽回退键
 function findModuleParameter(moduleCode, initFun) {
 	if (!moduleCode)
 		return;
-	$.getJSON('mgr/findModuleParameter', {
+	$.getJSON(localhostUrl+'mgr/findModuleParameter', {
 		moduleCode : moduleCode
 	}, function(data) {
 		if (!$.isSuccess(data))
@@ -326,7 +318,7 @@ function exit() {
 			closable : false,
 			message : "正在加载, 请稍等..."
 		});
-		$.getJSON('mgr/exit', function(data) {
+		$.getJSON(localhostUrl+'mgr/exit', function(data) {
 			if (!$.isSuccess(data))
 				return;
 //			webSocket.close();		
@@ -340,7 +332,7 @@ function exit() {
 function findMenu(moduleCode, initFun) {
 	$
 			.getJSON(
-					'mgr/findMenu',
+					localhostUrl+'mgr/findMenu',
 					function(data) {
 						if (!$.isSuccess(data))
 							return;

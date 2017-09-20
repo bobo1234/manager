@@ -61,6 +61,6 @@ public abstract interface ModuleService {
 	 * @param page
 	 * @return
 	 */
-	public String findByPage(String page);
+	public JSONReturn findByPage(String page);
 	
 }

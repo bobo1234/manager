@@ -75,11 +75,19 @@ public class ModuleController extends AbstractController {
 		System.out.println(id);
 		return moduleService.findByid(id);
 	}
+	
+	/**
+	 * 根据page查询code
+	 * @param page
+	 * @param httpSession
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "findByPage")
 	public JSONReturn findByPage(String page, HttpSession httpSession) {
-		return JSONReturn.buildSuccess(moduleService.findByPage(page));
+		return moduleService.findByPage(page);
 	}
+	
 	@ResponseBody
 	@RequestMapping(value = " getAllMenu")
 	public Map<String,Object> getAllMenu(HttpServletRequest request,
