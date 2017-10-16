@@ -22,7 +22,20 @@
 	<context:component-scan base-package="com.java.back" />
 
 	<!-- 引入外部文件 -->
-	<context:property-placeholder location="classpath:config.properties" />
+<!-- 	<context:property-placeholder location="classpath:config.properties" />
+ -->	
+ 	<bean id="propertiesConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config.properties</value>
+				<value>classpath:redis.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 引入redis配置 -->
+	 <import resource="spring-redis.xml"/>
 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="${jdbc.driver}"></property>

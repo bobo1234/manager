@@ -17,7 +17,7 @@ $(function() {
 	
 	var url = window.location.pathname;
 	var purl = window.location.href;
-	var m="/manager/";
+	var m="/bmanager/";
 	url=url.substring(m.length,url.length);
 	if(purl.indexOf('?')==-1){
 //		url = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('html')+4); //页面的地址,不带后面参数

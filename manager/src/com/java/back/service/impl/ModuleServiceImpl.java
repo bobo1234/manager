@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,10 @@ public class ModuleServiceImpl implements ModuleService {
 	public static final int TYPE_MDOIFY = 3;
 	public static final int TYPE_ADD = 4;
 
+	/**
+	 * redis缓存
+	 */
+	@Cacheable(value = "findAllMenu")
 	public JSONReturn findMenu(String acctName) {
 		// TODO Auto-generated method stub
 		TeAccount teAccount = accountDao.findUniqueByProperty(
@@ -59,7 +64,7 @@ public class ModuleServiceImpl implements ModuleService {
 			return JSONReturn.buildFailure(LoginState.UNLOGIN);
 		List<TeModule> moduleList = null;
 		if (teAccount.getAcctSuper())
-			moduleList = moduleDAO.findAlltoCache();
+			moduleList = moduleDAO.findAll();
 		else
 			moduleList = moduleDAO.findMgrModule(acctName);
 		if (CollectionUtils.isEmpty(moduleList))
@@ -70,7 +75,7 @@ public class ModuleServiceImpl implements ModuleService {
 	public JSONReturn findModuleParameter(String moduleCode, String acctName) {
 		// TODO Auto-generated method stub
 		Map<String, Object> map = new HashMap<String, Object>();
-		TeAccount teAccount = accountDao.findUniqueByPropertytoCache(
+		TeAccount teAccount = accountDao.findUniqueByProperty(
 				TeAccountField.ACCT_NAME, acctName);
 		if (CompareUtil.isEmpty(teAccount))
 			return JSONReturn.buildFailure(map);
@@ -82,7 +87,7 @@ public class ModuleServiceImpl implements ModuleService {
 			map.put("modify", teAccount.getAcctSuper() ? true : false);
 			return JSONReturn.buildSuccess(map);
 		}
-		TeModule teModule = moduleDAO.findUniqueByPropertytoCache(
+		TeModule teModule = moduleDAO.findUniqueByProperty(
 				TeModuleField.MODULE_CODE, moduleCode);
 		if (CompareUtil.isEmpty(teModule))
 			return JSONReturn.buildFailure("非法操作!");
@@ -143,9 +148,6 @@ public class ModuleServiceImpl implements ModuleService {
 		return JSONReturn.buildSuccess(map);
 	}
 
-	/**
-	 * 获取所有的菜单
-	 */
 	public JSONReturn findAllModule(long roleId) {
 		// TODO Auto-generated method stub
 		TeRole teRole = roleDao.findUniqueByProperty(TeRoleField.ROLE_ID,
@@ -262,7 +264,12 @@ public class ModuleServiceImpl implements ModuleService {
 		System.out.println(result);
 		return result;
 	}
-
+	
+	/**
+	 * 设置管理员权限
+	 * @param code
+	 * @param spcode
+	 */
 	private void setQX(String code, String spcode) {
 		TeRole role = roleDao
 				.findUniqueByProperty(TeRoleField.ROLE_NAME, "管理员");

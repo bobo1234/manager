@@ -22,7 +22,11 @@ public abstract interface ModuleService {
 	public abstract JSONReturn findModuleParameter(String moduleCode, String acctName);
 
 	public abstract JSONReturn findBreadcrumb(String moduleCode);
-
+	/**
+	 * 根据角色id获取对应的菜单
+	 * @param roleId
+	 * @return
+	 */
 	public abstract JSONReturn findAllModule(long roleId);
 
 	public abstract JSONReturn setRoleSecureValid(long rold, String code, int type, boolean add);
@@ -52,9 +56,16 @@ public abstract interface ModuleService {
 	 * @return
 	 */
 	public abstract JSONReturn updateModule(TeModule module);
-	
+	/**
+	 * 获取所有菜单列表
+	 * @return
+	 */
 	public abstract List<TeModule> getAllMenu();
-	
+	/**
+	 * 查看单个菜单信息
+	 * @param id
+	 * @return
+	 */
 	public abstract JSONReturn findByid(Long id);
 	/**
 	 * 根据url查询code
