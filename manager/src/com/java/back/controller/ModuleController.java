@@ -38,14 +38,12 @@ public class ModuleController extends AbstractController {
 
 	@ResponseBody
 	@RequestMapping(value = "findMenu")
-	@SecureValid(code = "", desc = "查询一级菜单信息", type = MethodType.FIND)
 	public JSONReturn findMenu(HttpSession httpSession) {
 		return moduleService.findMenu(acctName(httpSession));
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "findModuleParameter")
-	@SecureValid(code = "", desc = "查询二级菜单信息", type = MethodType.FIND)
 	public JSONReturn findModuleParameter(@RequestParam String moduleCode,
 			HttpSession httpSession) {
 		return moduleService.findModuleParameter(moduleCode,

@@ -54,10 +54,10 @@ public class ModuleServiceImpl implements ModuleService {
 	public static final int TYPE_ADD = 4;
 
 	
-	@Cacheable(value = "findMenu", key = "#acctName",condition="2%2==0")
+	@Cacheable(value = "findMenu", key = "'findMenu:'+#acctName",condition="2%2==0")
 	public JSONReturn findMenu(String acctName) {
 		// TODO Auto-generated method stub
-		System.out.println("======缓存======");
+		System.out.println("======菜单缓存======");
 		TeAccount teAccount = accountDao.findUniqueByProperty(
 				TeAccountField.ACCT_NAME, acctName);
 		if (CompareUtil.isEmpty(teAccount))
@@ -72,8 +72,10 @@ public class ModuleServiceImpl implements ModuleService {
 		return JSONReturn.buildSuccess(moduleList);
 	}
 	
+	@Cacheable(value = "findModuleParameter", key = "#acctName+':'+#moduleCode")
 	public JSONReturn findModuleParameter(String moduleCode, String acctName) {
 		// TODO Auto-generated method stub
+		System.out.println("======二级菜单缓存======");
 		Map<String, Object> map = new HashMap<String, Object>();
 		TeAccount teAccount = accountDao.findUniqueByProperty(
 				TeAccountField.ACCT_NAME, acctName);
@@ -148,7 +150,6 @@ public class ModuleServiceImpl implements ModuleService {
 		return JSONReturn.buildSuccess(map);
 	}
 
-//	@Cacheable(value = "findAllModule", key = "#roleId")
 	public JSONReturn findAllModule(long roleId) {
 		// TODO Auto-generated method stub
 		TeRole teRole = roleDao.findUniqueByProperty(TeRoleField.ROLE_ID,
@@ -184,7 +185,7 @@ public class ModuleServiceImpl implements ModuleService {
 	/**
 	 * 给角色设置权限菜单
 	 */
-	@CacheEvict(value = { "findMenu" }, allEntries = true)
+	@CacheEvict(value = { "findMenu" ," findModuleParameter"}, allEntries = true)
 	@Transactional
 	public JSONReturn setRoleSecureValid(long rold, String code, int type,
 			boolean add) {
@@ -285,7 +286,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 	
 	// allEntries是boolean类型，表示是否需要清除缓存中的所有元素。
-	@CacheEvict(value = { "findMenu" }, allEntries = true)
+	@CacheEvict(value = { "findMenu" ," findModuleParameter"}, allEntries = true)
 	public JSONReturn saveModule(TeModule module) {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(getMaxId(
@@ -329,7 +330,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	// @CacheEvict 注释来标记要清空缓存的方法，当这个方法被调用后，即会清空缓存。注意其中一个
-	@CacheEvict(value = "findMenu", allEntries = true)
+	@CacheEvict(value = { "findMenu" ," findModuleParameter"}, allEntries = true)
 	public JSONReturn deleteModule(String id) {
 		// TODO Auto-generated method stub
 		TeModule module = moduleDAO.get(Long.parseLong(id));
@@ -374,6 +375,7 @@ public class ModuleServiceImpl implements ModuleService {
 		return JSONReturn.buildFailure("修改失败");
 	}
 	
+//	@Cacheable("getAllMenu")
 	public List<TeModule> getAllMenu() {
 		// TODO Auto-generated method stub
 		List<TeModule> moduleList = moduleDAO.findAll();
