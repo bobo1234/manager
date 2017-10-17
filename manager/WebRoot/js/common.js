@@ -29,7 +29,7 @@ $(function() {
 			moduleCode=data.body;
 		}
 		if(url=='login.html'){//已经登录之后的用户
-			var data=ajax.json.get("mgr/getSessionName").body;
+			var data=ajax.json.get(localhostUrl+"mgr/getSessionName").body;
 			if(data!="UNLOGIN"){
 				location.href='index.html';
 				return;
@@ -372,7 +372,7 @@ function findMenu(moduleCode, initFun) {
  * 获取面包绡
  */
 function findBreadcrumb() {
-	$.post('mgr/findBreadcrumb', {
+	$.post(localhostUrl+'mgr/findBreadcrumb', {
 		moduleCode : moduleCode
 	}, function(data) {
 		var obj = $('ol.breadcrumb').empty();
@@ -612,12 +612,12 @@ BootstrapDialog.showModel = function(eml) {
  * websocket连接
  */
 function connect() {
-	var data=ajax.json.get("mgr/getSessionName").body;
+	var data=ajax.json.get(localhostUrl+"mgr/getSessionName").body;
 	if(data=='UNLOGIN'){
 		console.log("未登录--");
 		return;
 	}
-	var flag=ajax.json.get("mgr/getSessionFlag");
+	var flag=ajax.json.get(localhostUrl+"mgr/getSessionFlag");
 	if (flag=="1"){
 		console.log("已经启动");
 		return webSocket;
@@ -635,7 +635,7 @@ function connect() {
 				url+strFullPath+"/socketservice/" + username);
 		
 		webSocket.onopen = function(event) {
-			ajax.json.post("mgr/setSessionFlag", username);
+			ajax.json.post(localhostUrl+"mgr/setSessionFlag", username);
 			console.log("连接建立成功！");
 			webSocket.send("[join]||||"+username);
 		};
