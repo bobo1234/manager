@@ -143,23 +143,22 @@ public class SupportController extends AbstractController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "getSessionUser")
+	@RequestMapping(value = "getSessionName")
 	public JSONReturn getSessionUser(HttpServletRequest request,
 			HttpServletResponse response) {
 		String userName = (String) request.getSession().getAttribute(
 				SessionKey.MODULEACCTNAME);
-		return StringUtils.isEmpty(userName) ||userName.equals("UNLOGIN")? JSONReturn
-				.buildFailureWithEmptyBody() : JSONReturn
-				.buildSuccess(userName);
+		return StringUtils.isNotBlank(userName)||!userName.equals("UNLOGIN")? JSONReturn
+				.buildSuccess(userName):JSONReturn
+				.buildFailureWithEmptyBody();
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "getSessionFlag")
 	public String getSessionFlag(HttpServletRequest request,
 			HttpServletResponse response) {
-		String flag = (String) request.getSession().getAttribute(
-				"flag");
-		return StringUtils.isEmpty(flag)? "":flag;
+		String flag = (String) request.getSession().getAttribute("flag");
+		return StringUtils.isEmpty(flag) ? "" : flag;
 	}
 
 	@RequestMapping(value = "setSessionFlag")

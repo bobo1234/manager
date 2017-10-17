@@ -1,5 +1,7 @@
 package com.java.back.intercept;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,11 +37,7 @@ public class SecureValidInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest req, HttpServletResponse resp,
 			Object handle) throws Exception {
 		// TODO Auto-generated method stub
-
-		// 为了模仿实际网络中请求的速度, 这里让每一个请求的线程都睡眠50毫秒, 项目真正上线需删除
-		// Thread.sleep(50);
-
-		if (req.getRequestURI().contains("mgr/0"))
+		if (req.getRequestURI().contains("mgr/0"))//验证图片
 			return true;
 		String userName = (String) req.getSession().getAttribute(
 				SessionKey.MODULEACCTNAME);
@@ -71,9 +69,10 @@ public class SecureValidInterceptor extends HandlerInterceptorAdapter {
 		 * 方法有注释的情况下
 		 */
 		if (!CompareUtil.isEmpty(secureValid)) {
+			Map<String ,String[]> map=req.getParameterMap();
 			System.out.println("方法:" + handlerMethod.getMethod().getName()
 					+ "描述:" + secureValid.desc() + "-----参数:"
-					+ JsonUtil.mapTojson(req.getParameterMap()));
+					+ JsonUtil.mapTojson(map));
 //			if (secureValid.code().length>0) {//权限验证
 //				if (!moduleService.secureValid(userName, secureValid.code(),
 //						secureValid.type())) {

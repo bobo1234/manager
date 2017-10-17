@@ -21,13 +21,20 @@ $(function() {
 	url=url.substring(m.length,url.length);
 	if(purl.indexOf('?')==-1){
 //		url = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('html')+4); //页面的地址,不带后面参数
-		if(url!='index.html'&&url!='login.html'){
+		if(url!='index.html'&&url!='login.html'&&url!=""){
 			//根据页面地址获取菜单的code
 			localhostUrl="http://"+window.location.host+m;
 			var data=ajax.json.get(localhostUrl+"mgr/findByPage?page="+url);
 			if (!$.isSuccess(data))//未找到菜单的code
 				return;
 			moduleCode=data.body;
+		}
+		if(url=='login.html'){//已经登录之后的用户
+			var data=ajax.json.get("mgr/getSessionName").body;
+			if(data!="UNLOGIN"){
+				location.href='index.html';
+				return;
+			}
 		}
 	}
 	
@@ -429,6 +436,16 @@ BootstrapDialog.confirm = function(message, callback) {
 				} ]
 	}).open();
 };
+
+/**
+ * 弹窗
+ * (BootstrapDialog.TYPE_INFO or 'type-info' 
+BootstrapDialog.TYPE_PRIMARY or 'type-primary' (default) 
+BootstrapDialog.TYPE_SUCCESS or 'type-success' 
+BootstrapDialog.TYPE_WARNING or 'type-warning' 
+BootstrapDialog.TYPE_DANGER or 'type-danger')
+ * 
+ */
 BootstrapDialog.alert = function(message, type) {
 	new BootstrapDialog({
 		title : '提示信息',
@@ -596,8 +613,8 @@ BootstrapDialog.showModel = function(eml) {
  * websocket连接
  */
 function connect() {
-	var username=ajax.json.get("mgr/getSessionUser").body;
-	if(username==null||username==""){
+	var data=ajax.json.get("mgr/getSessionName").body;
+	if(data=='UNLOGIN'){
 		console.log("未登录--");
 		return;
 	}

@@ -22,13 +22,22 @@ public abstract interface ModuleService {
 	public abstract JSONReturn findModuleParameter(String moduleCode, String acctName);
 
 	public abstract JSONReturn findBreadcrumb(String moduleCode);
+	
 	/**
-	 * 根据角色id获取对应的菜单
+	 * 根据角色id勾选对应的菜单(模块权限设置之前展示的数据)
 	 * @param roleId
 	 * @return
 	 */
 	public abstract JSONReturn findAllModule(long roleId);
-
+	
+	/**
+	 * 给角色设置权限菜单
+	 * @param rold
+	 * @param code
+	 * @param type
+	 * @param add
+	 * @return
+	 */
 	public abstract JSONReturn setRoleSecureValid(long rold, String code, int type, boolean add);
 	/**
 	 * 判断用户是否有权限

@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:cache="http://www.springframework.org/schema/cache"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	 http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-	 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd  
-     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
-     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd 
-     http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd 
-     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+     http://www.springframework.org/schema/cache
+      http://www.springframework.org/schema/cache/spring-cache.xsd 
+     http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
 	<!-- 配置JedisPoolConfig实例 -->
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -48,15 +44,14 @@
 	<cache:annotation-driven cache-manager="cacheManager" />
 
 	<!-- 配置缓存 by dada -->
-	<!-- <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager"> 
-		<constructor-arg ref="redisTemplate" /> <property name="defaultExpiration" 
-		value="300"></property> <property name="usePrefix" value="true"></property> 
-		<property name="expires"> <util:map> 指定key的时间为1500秒 <entry key="get_bank_province_list" 
-		value="1500"></entry> <entry key="get_areas_bypid_list" value="1500"></entry> 
-		</util:map> </property> </bean> -->
+	<bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+		<constructor-arg ref="redisTemplate" />
+		<!-- <property name="defaultExpiration" value="300"></property> <property 
+			name="usePrefix" value="true"></property> -->
+	</bean>
 
-	<bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager"
-		c:template-ref="redisTemplate" />
-		
+	<!-- <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager" 
+		c:template-ref="redisTemplate" /> -->
+
 
 </beans>
