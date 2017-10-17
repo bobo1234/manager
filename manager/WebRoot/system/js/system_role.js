@@ -22,7 +22,7 @@ function initFun() {
  *  
  */
 function findListInfo() {
-	$.post('mgr/role/findRoleList', {
+	$.post(localhostUrl+'mgr/role/findRoleList', {
 		page : page,
 		searchVal : $('input.searchInput').val()
 	}, function(data) {
@@ -47,7 +47,7 @@ function findListInfo() {
  *  
  */
 function findRolePage() {
-	$.post('mgr/role/findRolePage', {page : page,searchVal : $('input.searchInput').val()}, function(data) {
+	$.post(localhostUrl+'mgr/role/findRolePage', {page : page,searchVal : $('input.searchInput').val()}, function(data) {
 		$.analysisPage(data.body); 
 	}, 'json');
 }
@@ -82,7 +82,7 @@ function addRole(){
 	role.description = $.verifyForm($('textarea.addRoleDesc'), true);
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/role/addRole', {name : role.name,desc : role.description}, function(data){
+	$.post(localhostUrl+'mgr/role/addRole', {name : role.name,desc : role.description}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		BootstrapDialog.hideModel($('div.add-box'));
@@ -99,7 +99,7 @@ function showModifyBox(id){
 	if(!id) return;
 	role.id = id;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/role/findRoleById', {id : id}, function(data){
+	$.getJSON(localhostUrl+'mgr/role/findRoleById', {id : id}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		$('input.modifyRoleName').val(data.body.name);
@@ -118,7 +118,7 @@ function modifyRole(){
 	role.desc = $.verifyForm($('textarea.modifyRoleDesc'), true);
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/role/modifyRole', {
+	$.post(localhostUrl+'mgr/role/modifyRole', {
 		id : role.id,
 		name : role.name,
 		desc : role.desc
@@ -139,7 +139,7 @@ function hintDelete(id){
 	BootstrapDialog.confirm("请确认是否删除该角色?<br /><span class='placeholder'>PS: 删除后该角色关联的帐号全部将失效, 请谨慎操作!<span>", function(result){
 		if(!result) return;
 		dialog = BootstrapDialog.isSubmitted();
-		$.getJSON('mgr/role/deleteRole', {id:id}, function(data){
+		$.getJSON(localhostUrl+'mgr/role/deleteRole', {id:id}, function(data){
 			dialog.close();
 			if(!$.isSuccess(data)) return;
 			BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
@@ -156,7 +156,7 @@ function listModule(id){
 	if(!id) return;
 	curRoleId = id;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/role/findAllModule', {roleId : curRoleId}, function(data){
+	$.getJSON(localhostUrl+'mgr/role/findAllModule', {roleId : curRoleId}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		var tbody = $('table.module-table').empty();
@@ -201,7 +201,7 @@ function findAdd(l){
  */
 function setRoleSecureValid(obj, code, type){
 	if(!code) return;
-	$.post('mgr/role/setRoleSecureValid', {
+	$.post(localhostUrl+'mgr/role/setRoleSecureValid', {
 		rold : curRoleId,
 		code : code, 
 		type : type,

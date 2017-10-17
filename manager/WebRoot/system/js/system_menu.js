@@ -1,4 +1,3 @@
-//var moduleCode = '04003';
 var curRoleId;
 
 var type = {};
@@ -25,7 +24,7 @@ function getMenu() {
     console.info("正在执行Ajax请求");
     $.ajax({
         type: "post",
-        url: "mgr/getAllMenu", //Servlet请求地址
+        url: localhostUrl+"mgr/getAllMenu", //Servlet请求地址
         dataType: "json",
         success: function (data) {
             var con = data.rows;//获取json中的list列表
@@ -115,7 +114,7 @@ function addMenu(){
 	menu.moduleName = $.verifyForm($('input.moduleName'), true);
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/addModule', {'moduleName' : menu.moduleName,'moduleLevel' : 0}, function(data){
+	$.post(localhostUrl+'mgr/addModule', {'moduleName' : menu.moduleName,'moduleLevel' : 0}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		BootstrapDialog.hideModel($('div.add-box'));
@@ -133,7 +132,7 @@ function addSMenu(){
 	menu.modulePage = $.verifyForm($('.add-box2 input.modulePage'), true);
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/addModule', {'moduleName' : menu.moduleName,'moduleLevel' : 1,"moduleSuperCode":menu.moduleSuperCode,"modulePage":menu.modulePage}, function(data){
+	$.post(localhostUrl+'mgr/addModule', {'moduleName' : menu.moduleName,'moduleLevel' : 1,"moduleSuperCode":menu.moduleSuperCode,"modulePage":menu.modulePage}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		BootstrapDialog.hideModel($('div.add-box2'));//隐藏表单
@@ -148,7 +147,7 @@ function showModifyBox(id){
 	$('.empty').removeClass('empty');
 	if(!id) return;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/findByid', {id : id}, function(data){
+	$.getJSON(localhostUrl+'mgr/findByid', {id : id}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		$('input.modifymoduleName').val(data.body.moduleName);
@@ -174,7 +173,7 @@ function modifyMenu(){
 	}
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/updateModule', {
+	$.post(localhostUrl+'mgr/updateModule', {
 		"moduleId" : menu.modifymoduleId,
 		"moduleName" : menu.moduleName,
 		"modulePage" : menu.modulePage,
@@ -195,7 +194,7 @@ function menuDelete(id){
 	BootstrapDialog.confirm("请确认是否删除该菜单?<br /><span class='placeholder'>PS: 删除后该菜单关联的角色权限全部将失效, 请谨慎操作!<span>", function(result){
 		if(!result) return;
 		dialog = BootstrapDialog.isSubmitted();
-		$.getJSON('mgr/delModule', {id:id}, function(data){
+		$.getJSON(localhostUrl+'mgr/delModule', {id:id}, function(data){
 			dialog.close();
 			if(!$.isSuccess(data)) return;
 			BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);

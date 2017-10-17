@@ -16,7 +16,7 @@ function initFun() {
  *  
  */
 function findListInfo() {
-	$.post('mgr/findLogListInfo', {
+	$.post(localhostUrl+'mgr/findLogListInfo', {
 		page : page,
 		Logtype : $('select.typeList').val(),
 		des : $('input.searchInput').val(),
@@ -60,7 +60,7 @@ function findListInfo() {
 			.appendTo(tbody);
 		});
 	}, 'json');
-	$.post('mgr/findLogPage', {
+	$.post(localhostUrl+'mgr/findLogPage', {
 		page : page,
 		des : $('input.searchInput').val(),
 		Logtype : $('select.typeList').val(),
@@ -88,7 +88,7 @@ function analyzeBtns(v){
 function showDetails(id){
 	if(!id) return;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/findLogById', {id:id}, function(data){
+	$.getJSON(localhostUrl+'mgr/findLogById', {id:id}, function(data){
 		dialog.close();
 		if (!$.isSuccess(data)) return;
 		
@@ -127,7 +127,7 @@ function showDetails(id){
  */
 function findUserSelect(curDepartient, eml) {
 	eml.empty().append("<option value=''>选择操作人员</option>");
-	$.getJSON('mgr/account/findAccount', function(data) {
+	$.getJSON(localhostUrl+'mgr/account/findAccount', function(data) {
 		if(!$.isSuccess(data)) return;
 		$.each(data.body, function(i,v){
 			$("<option "+analyzeSelect(v.acctId,curDepartient) +" value="+v.acctId+"></option>")
@@ -156,7 +156,7 @@ function hintDelete(id){
 	BootstrapDialog.confirm("请确认是否删除该数据!", function(result){
 		if(!result) return;
 		dialog = BootstrapDialog.isSubmitted();
-		$.getJSON('mgr/deleteLog',{id : id}, function(data){
+		$.getJSON(localhostUrl+'mgr/deleteLog',{id : id}, function(data){
 			if(!$.isSuccess(data)) return;
 			dialog.close();
 			BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);

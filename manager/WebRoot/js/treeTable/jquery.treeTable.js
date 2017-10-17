@@ -1,16 +1,12 @@
 /**
 * 树表组件
-* @author benzhan (詹潮江)
-* @version 1.4.2
-* @lastUpdateDate 2011-09-03
-* @mail zhanchaojiang@qq.com
 */
 (function ($) {
 	window.SITE_URL = window.SITE_URL || '';
 	if (document.location.href.indexOf('http://') != 0)	{
 		var path = '../js/treeTable/';
 	} else {
-		var path = SITE_URL + 'js/treeTable/';
+		var path = localhostUrl + 'js/treeTable/';
 	}
 
     $.fn.treeTable = function (opts) {

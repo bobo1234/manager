@@ -17,7 +17,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * TeModule entity. @author MyEclipse Persistence Tools
+ * 菜单表
  */
 @Entity
 @Table(name = "te_module", uniqueConstraints = {

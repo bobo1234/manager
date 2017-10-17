@@ -4,26 +4,25 @@ var dialog = null;
 var moduleCode = "";
 var curRoleId;
 var webSocket;//通信
-var localhostUrl="";
+var m="/bmanager/";
 
 var type = {};
 type.FIND = 1;
 type.DELETE = 2;
 type.MODIFY = 3;
 type.ADD = 4;
-
+var localhostUrl="http://"+window.location.host+m;
 
 $(function() {
 	
 	var url = window.location.pathname;
 	var purl = window.location.href;
-	var m="/bmanager/";
+	
 	url=url.substring(m.length,url.length);
 	if(purl.indexOf('?')==-1){
 //		url = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('html')+4); //页面的地址,不带后面参数
 		if(url!='index.html'&&url!='login.html'&&url!=""){
 			//根据页面地址获取菜单的code
-			localhostUrl="http://"+window.location.host+m;
 			var data=ajax.json.get(localhostUrl+"mgr/findByPage?page="+url);
 			if (!$.isSuccess(data))//未找到菜单的code
 				return;
@@ -399,7 +398,7 @@ function analyzeMenu(code, data) {
 	ul += "<ul class='dropdown-menu'>";
 	$.each(data, function(i, v) {
 		if (v.moduleSuperCode == code)
-			ul += "<li><a href='" + v.modulePage + "'>" + v.moduleName
+			ul += "<li><a href='" +localhostUrl+ v.modulePage + "'>" + v.moduleName
 					+ "</a></li>";
 	});
 	ul += "</ul>";

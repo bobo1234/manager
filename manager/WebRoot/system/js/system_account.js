@@ -15,7 +15,7 @@ function initFun() {
  *  
  */
 function findListInfo() {
-	$.post('mgr/account/findAccountList', {
+	$.post(localhostUrl+'mgr/account/findAccountList', {
 		page : page,
 		searchValue : $('input.searchInput').val()
 	}, function(data) {
@@ -40,7 +40,7 @@ function findListInfo() {
  *  
  */
 function findAccountPage() {
-	$.post('mgr/account/findAccountPage', {
+	$.post(localhostUrl+'mgr/account/findAccountPage', {
 		page : page,
 		searchValue : $('input.searchInput').val()
 	}, function(data) {
@@ -82,7 +82,7 @@ function addAccount(){
 	account.password = $.verifyForm($('input.acctPass'), true);
 	if(!$.isSubmit) reutrn;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/account/addAccount', {
+	$.post(localhostUrl+'mgr/account/addAccount', {
 		user : account.username,
 		nick : account.nickname,
 		pass : account.password,
@@ -103,7 +103,7 @@ function hintDelete(id){
 	BootstrapDialog.confirm("请确定是否删除该帐号?", function(result){
 		if(!result) return;
 		dialog = BootstrapDialog.isSubmitted();
-		$.getJSON('mgr/account/delAccount', {id:id}, function(data){
+		$.getJSON(localhostUrl+'mgr/account/delAccount', {id:id}, function(data){
 			dialog.close();
 			if(!$.isSuccess(data)) return;
 			BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
@@ -120,7 +120,7 @@ function initPassword(id){
 	BootstrapDialog.confirm("请确定是否将该账户密码重置为 <b style='color:red;'>123456</b>", function(result){
 		if(!result) return;
 		dialog = BootstrapDialog.isSubmitted();
-		$.getJSON('mgr/account/initPassword', {id:id}, function(data){
+		$.getJSON(localhostUrl+'mgr/account/initPassword', {id:id}, function(data){
 			dialog.close();
 			if(!$.isSuccess(data)) return; 
 			BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
@@ -136,7 +136,7 @@ function showModifyBox(id){
 	if(!id) return;
 	account.id = id;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/account/findAccountById', {id:id}, function(data){
+	$.getJSON(localhostUrl+'mgr/account/findAccountById', {id:id}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		$('input.modifyAcctName').val(data.body.name);
@@ -154,7 +154,7 @@ function mdoifyAccount(){
 	account.nickname = $.verifyForm($('input.mdoifyAcctNick'), true);
 	if(!$.isSubmit) return;
 	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/account/modifyNickname', {
+	$.post(localhostUrl+'mgr/account/modifyNickname', {
 		id : account.id,
 		nickname : account.nickname
 	}, function(data){
@@ -174,7 +174,7 @@ function roleMgr(acctName){
 	var tbody = $('table.module-table').empty();
 	curAcctName = acctName;
 	dialog = BootstrapDialog.loading();
-	$.getJSON('mgr/account/findRole', {acctName : acctName}, function(data){
+	$.getJSON(localhostUrl+'mgr/account/findRole', {acctName : acctName}, function(data){
 		dialog.close();
 		if(!$.isSuccess(data)) return;
 		$.each(data.body, function(i,v){
@@ -193,7 +193,7 @@ function findRoleCheckBox(v){
  */
 function setAccountRole(obj, id){
 	if(!id) return;
-	$.post('mgr/account/addAccountRole', {
+	$.post(localhostUrl+'mgr/account/addAccountRole', {
 		id : id, 
 		account : curAcctName, 
 		add : $(obj).is(':checked')
