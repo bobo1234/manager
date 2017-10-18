@@ -33,9 +33,9 @@ public class TeMember extends BaseBean {
 	 */
 	private String realname;
 	/**
-	 * 状态
+	 * 状态等级
 	 */
-	private Integer status;
+	private int rank;
 	/**
 	 * 创建时间
 	 */
@@ -51,12 +51,16 @@ public class TeMember extends BaseBean {
 	/**
 	 * 性别
 	 */
-	private String sex;
+	private int sex;
 	/**
 	 * 头像
 	 */
 	private String headimgurl;
-	
+	/**
+	 * 握拍方式
+	 */
+	private int griptype;
+
 	public String getAccount() {
 		return account;
 	}
@@ -89,12 +93,12 @@ public class TeMember extends BaseBean {
 		this.realname = realname;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public int getRank() {
+		return rank;
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setRank(int rank) {
+		this.rank = rank;
 	}
 
 	public Date getCreatetime() {
@@ -121,12 +125,20 @@ public class TeMember extends BaseBean {
 		this.age = age;
 	}
 
-	public String getSex() {
+	public int getSex() {
 		return sex;
 	}
 
-	public void setSex(String sex) {
+	public void setSex(int sex) {
 		this.sex = sex;
+	}
+
+	public int getGriptype() {
+		return griptype;
+	}
+
+	public void setGriptype(int griptype) {
+		this.griptype = griptype;
 	}
 
 	public static long getSerialversionuid() {

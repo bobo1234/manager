@@ -17,10 +17,8 @@ $(function() {
 	
 	var url = window.location.pathname;
 	var purl = window.location.href;
-	
 	url=url.substring(m.length,url.length);
 	if(purl.indexOf('?')==-1){
-//		url = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('html')+4); //页面的地址,不带后面参数
 		if(url!='index.html'&&url!='login.html'&&url!=""){
 			//根据页面地址获取菜单的code
 			var data=ajax.json.get(localhostUrl+"mgr/findByPage?page="+url);
@@ -31,7 +29,7 @@ $(function() {
 		if(url=='login.html'){//已经登录之后的用户
 			var data=ajax.json.get(localhostUrl+"mgr/getSessionName").body;
 			if(data!="UNLOGIN"){
-				location.href='index.html';
+				href2Index();
 				return;
 			}
 		}
@@ -295,6 +293,7 @@ function findModuleParameter(moduleCode, initFun) {
 			$('div.main').remove(); // 删除页面主要元素
 			BootstrapDialog.msg("非法操作, 你没有当前页面的权限!",
 					BootstrapDialog.TYPE_DANGER);
+			setTimeout("href2Index()", 1000);
 			return;
 		}
 		$('div.main').removeClass('hide');
@@ -312,7 +311,15 @@ function findModuleParameter(moduleCode, initFun) {
 		initFun();
 	});
 }
-/*
+
+/**
+ * 转到首页
+ */
+function href2Index() {
+	window.location.href = localhostUrl+"index.html";
+}
+
+/**
  * 退出登录
  */
 function exit() {
@@ -328,7 +335,7 @@ function exit() {
 			if (!$.isSuccess(data))
 				return;
 //			webSocket.close();		
-			window.location.href = "./login.html";
+			window.location.href = localhostUrl+"login.html";
 		});
 	});
 }
@@ -391,7 +398,7 @@ function addBreadcrumb(msg) {
 	$('ol.breadcrumb').append($("<li class='active'></li>").append(msg));
 }
 /*
- * 解析导航菜单
+ * 解析导航菜单,二级菜单
  */
 function analyzeMenu(code, data) {
 	var ul = '';
@@ -437,7 +444,7 @@ BootstrapDialog.confirm = function(message, callback) {
 };
 
 /**
- * 弹窗
+ * 有关闭按钮的弹窗
  * (BootstrapDialog.TYPE_INFO or 'type-info' 
 BootstrapDialog.TYPE_PRIMARY or 'type-primary' (default) 
 BootstrapDialog.TYPE_SUCCESS or 'type-success' 
@@ -460,6 +467,9 @@ BootstrapDialog.alert = function(message, type) {
 	}).open();
 };
 var dg = null;
+/**
+ * 自动隐藏的弹窗
+ */
 BootstrapDialog.msg = function(message, type) {
 	dg = new BootstrapDialog({
 		title : '提示信息',
@@ -590,7 +600,7 @@ BootstrapDialog.showModel = function(eml) {
 					type : BootstrapDialog.TYPE_DANGER,
 					message : '您还没有登录',
 					onhide : function(dialog) {
-						window.location.href = "./login.html";
+						window.location.href =localhostUrl+"login.html";
 					}
 				});
 				setTimeout("hidedg()", 1500);//隐藏弹窗信息
@@ -683,14 +693,6 @@ function getUserlist(){
 	websocket.send('[getUserlist]||||A');
 	return userlist;
 };
-
-//强制下线
-function goOut(){
-	var strFullPath = window.document.location.href;
-	strFullPath= strFullPath.substring(0,strFullPath.lastIndexOf('/'));
-	location.href=strFullPath+"/mgr/exit";
-	location.href='login.html';
-}
 
 /**
  * 给所有人发送消息
