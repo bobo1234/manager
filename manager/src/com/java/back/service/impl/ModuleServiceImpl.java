@@ -57,7 +57,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Cacheable(value = "findMenu", key = "'findMenu:'+#acctName",condition="2%2==0")
 	public JSONReturn findMenu(String acctName) {
 		// TODO Auto-generated method stub
-		System.out.println("======菜单缓存======");
+		System.out.println("======一级菜单缓存======");
 		TeAccount teAccount = accountDao.findUniqueByProperty(
 				TeAccountField.ACCT_NAME, acctName);
 		if (CompareUtil.isEmpty(teAccount))

@@ -42,6 +42,11 @@ public class SupportController extends AbstractController {
 	@Autowired
 	private EmployeesService employeesService;
 
+	/**
+	 * 验证码
+	 * @param request
+	 * @param response
+	 */
 	@RequestMapping(value = "0/findVerifydCode")
 	public void findVerifydCode(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -66,11 +71,16 @@ public class SupportController extends AbstractController {
 	public JSONReturn findBreadcrumb(String moduleCode) {
 		return moduleService.findBreadcrumb(moduleCode);
 	}
-
+	
+	/**
+	 * 用户退出
+	 * @param httpSession
+	 * @param request
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "exit")
 	public JSONReturn exit(HttpSession httpSession, HttpServletRequest request) {
-		request.getSession().removeAttribute("flag");
 		return accountService.exit(httpSession, request);
 	}
 

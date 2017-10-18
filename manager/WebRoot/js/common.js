@@ -287,7 +287,7 @@ function findModuleParameter(moduleCode, initFun) {
 	}, function(data) {
 		if (!$.isSuccess(data))
 			return;
-		$('a.acctInfo').append(data.body.acctount);
+		$('span.acctInfo').append(data.body.acctount);
 		secure = data.body;
 		if (!secure.find) {
 			$('div.main').remove(); // 删除页面主要元素

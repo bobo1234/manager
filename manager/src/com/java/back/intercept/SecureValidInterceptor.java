@@ -37,7 +37,7 @@ public class SecureValidInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest req, HttpServletResponse resp,
 			Object handle) throws Exception {
 		// TODO Auto-generated method stub
-		if (req.getRequestURI().contains("mgr/0"))//验证图片
+		if (req.getRequestURI().contains("mgr/0"))// 验证图片
 			return true;
 		String userName = (String) req.getSession().getAttribute(
 				SessionKey.MODULEACCTNAME);
@@ -65,27 +65,26 @@ public class SecureValidInterceptor extends HandlerInterceptorAdapter {
 		HandlerMethod handlerMethod = (HandlerMethod) handle;
 		SecureValid secureValid = handlerMethod.getMethod().getAnnotation(
 				SecureValid.class);
+		Map<String, String[]> map = req.getParameterMap();
+		System.out.println("方法:" + handlerMethod.getMethod().getName()
+				+ "   参数:"+JsonUtil.mapTojson(map));
 		/**
-		 * 方法有注释的情况下
+		 * 方法有注释的情况下,才去记录操作日志
 		 */
 		if (!CompareUtil.isEmpty(secureValid)) {
-			Map<String ,String[]> map=req.getParameterMap();
-			System.out.println("方法:" + handlerMethod.getMethod().getName()
-					+ "描述:" + secureValid.desc() + "-----参数:"
-					+ JsonUtil.mapTojson(map));
-//			if (secureValid.code().length>0) {//权限验证
-//				if (!moduleService.secureValid(userName, secureValid.code(),
-//						secureValid.type())) {
-//					resp.getOutputStream()
-//							.print(JSONObject
-//									.fromObject(
-//											JSONReturn
-//													.buildFailure(LoginState.PERMISSION_DENIED))
-//									.toString());
-//					return false;
-//				}
-//			}
-			
+			// if (secureValid.code().length>0) {//权限验证
+			// if (!moduleService.secureValid(userName, secureValid.code(),
+			// secureValid.type())) {
+			// resp.getOutputStream()
+			// .print(JSONObject
+			// .fromObject(
+			// JSONReturn
+			// .buildFailure(LoginState.PERMISSION_DENIED))
+			// .toString());
+			// return false;
+			// }
+			// }
+
 			/**
 			 * 记录操作日志
 			 */

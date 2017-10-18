@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.java.back.constant.AccountDeleteState;
 import com.java.back.constant.AccountInitPassword;
@@ -40,6 +43,7 @@ import com.java.back.utils.DateTimeUtil;
 import com.java.back.utils.DateUtil;
 import com.java.back.utils.EncryptUtil;
 import com.java.back.utils.PageUtils;
+import com.java.back.utils.SpringContextUtil;
 
 @Scope
 @Service
@@ -268,7 +272,8 @@ public class AccountServiceImpl implements AccountService {
 		if (CompareUtil.isEmpty(acct))
 			return JSONReturn.buildFailure("修改密码失败, 用户不存在!");
 		acct.setAcctPassword(EncryptUtil.encodeMD5String(password));
-		return JSONReturn.buildSuccess("密码修改成功!");
+		SpringContextUtil.getRequest().getSession().invalidate();//清空session内容
+		return JSONReturn.buildSuccess("密码修改成功,即将转入登录页面!");
 	}
 
 	public JSONReturn findAccount() {
