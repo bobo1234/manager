@@ -70,6 +70,23 @@ public class RedisSpringProxy {
 		return redisTemplate.hasKey(key);
 	}
 
+	// 删除当前数据库中的所有Key
+	// flushdb
+	// 删除所有数据库中的key
+	// flushall
+	/**
+	 * 清空redis 中的所有数据
+	 */
+	public Long flushAll() {
+		final String key="flushall";
+		return redisTemplate.execute(new RedisCallback<Long>() {
+			@Override
+			public Long doInRedis(RedisConnection connection) {
+				return connection.del(serializeKey(key));
+			}
+		});
+	}
+
 	/**
 	 * 清空redis 中的所有数据
 	 */

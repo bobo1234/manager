@@ -3,148 +3,159 @@ var page = 1; // 默认页面
 var dialog = null;
 var moduleCode = "";
 var curRoleId;
-var webSocket;//通信
-var m="/bmanager/";
+var webSocket;// 通信
+var m = getRealPath();
 
 var type = {};
 type.FIND = 1;
 type.DELETE = 2;
 type.MODIFY = 3;
 type.ADD = 4;
-var localhostUrl="http://"+window.location.host+m;
+var localhostUrl = "http://" + window.location.host + m;
 
+function getRealPath() {
+	// 获取当前网址，如： http://localhost:8083/myproj/view/my.jsp
+//	var curWwwPath = window.document.location.href;
+	// 获取主机地址之后的目录，如： myproj/view/my.jsp
+	var pathName = window.document.location.pathname;
+//	var pos = curWwwPath.indexOf(pathName);
+	// 获取主机地址，如： http://localhost:8083
+//	var localhostPaht = curWwwPath.substring(0, pos);
+	// 获取带"/"的项目名，如：/myproj
+	var projectName = pathName
+			.substring(0, pathName.substr(1).indexOf('/') + 1);
+	// 得到了 http://localhost:8083/myproj
+//	var realPath = localhostPaht + projectName;
+	return projectName+"/";
+};
 $(function() {
-	
+	getRealPath();
 	var url = window.location.pathname;
 	var purl = window.location.href;
-	url=url.substring(m.length,url.length);
-	if(purl.indexOf('?')==-1){
-		if(url!='index.html'&&url!='login.html'&&url!=""){
-			//根据页面地址获取菜单的code
-			var data=ajax.json.get(localhostUrl+"mgr/findByPage?page="+url);
-			if (!$.isSuccess(data))//未找到菜单的code
-				return;
-			moduleCode=data.body;
+	url = url.substring(m.length, url.length);
+	if (purl.indexOf('?') == -1) {
+		if (url != 'index.html' && url != 'login.html' && url != "") {
+			// 根据页面地址获取菜单的code
+			var data = ajax.json.get(localhostUrl + "mgr/findByPage?page="
+					+ url);
+			if (!$.isSuccess(data))// 未找到菜单的code
+			return;
+			moduleCode = data.body;
 		}
-		if(url=='login.html'){//已经登录之后的用户
-			var data=ajax.json.get(localhostUrl+"mgr/getSessionName").body;
-			if(data!="UNLOGIN"){
+		if (url == 'login.html') {// 已经登录之后的用户
+			var data = ajax.json.get(localhostUrl + "mgr/getSessionName").body;
+			if (data != "UNLOGIN") {
 				href2Index();
 				return;
 			}
 		}
 	}
-	
-	if(moduleCode>=0){//页面菜单权限判断
+
+	if (moduleCode >= 0) {// 页面菜单权限判断
 		findMenu(moduleCode, initFun);
 		$('td.table-val').css('padding', '5px');
-//		connect();//连接websocket
+		// connect();//连接websocket
 	}
-	
-	
+
 });
 /**
  * 原生ajax方法封装
  */
 var ajax = {};
-ajax.createPoster = function() {   
-  return window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();  
+ajax.createPoster = function() {
+	return window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP")
+			: new XMLHttpRequest();
 };
-ajax.get = function(url){
-  var iPoster=this.createPoster();
-  var strResult=" ";
-  iPoster.open("GET", url, false);
-  try{
-    iPoster.send("");
-    if((iPoster.readyState==4||iPoster.readyState=="complete") && (iPoster.status==200)){
-      strResult = iPoster.responseText;
-    }
-    else{
-      strResult = "Error: Can not connect to the server. ";
-    }
-  }
-  catch(err){
-    return "";
-  }
-  iPoster = null;
-  return strResult;
-};
-
-ajax.post = function(url, content){
-  var iPoster=this.createPoster();
-  var strResult=" ";
-  iPoster.open("POST", url, false); 
-  iPoster.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
-  //iPoster.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');   
-  try{
-    iPoster.send(content);
-    if((iPoster.readyState==4) && (iPoster.status==200)){
-      strResult = iPoster.responseText;
-    }
-    else{
-      strResult = "Error: Can not connect to the server. ";
-    }
-  }
-  catch(err){
-    return "";
-  }
-
-  iPoster = null; 
-  return strResult;  
+ajax.get = function(url) {
+	var iPoster = this.createPoster();
+	var strResult = " ";
+	iPoster.open("GET", url, false);
+	try {
+		iPoster.send("");
+		if ((iPoster.readyState == 4 || iPoster.readyState == "complete")
+				&& (iPoster.status == 200)) {
+			strResult = iPoster.responseText;
+		} else {
+			strResult = "Error: Can not connect to the server. ";
+		}
+	} catch (err) {
+		return "";
+	}
+	iPoster = null;
+	return strResult;
 };
 
-ajax.json={};
-ajax.json.get=function(url){
-  try{
-    return eval("(" + ajax.get(url) + ");");
-  }
-  catch(e){
-    return null;
-  }
+ajax.post = function(url, content) {
+	var iPoster = this.createPoster();
+	var strResult = " ";
+	iPoster.open("POST", url, false);
+	iPoster.setRequestHeader("Content-Type",
+			"application/x-www-form-urlencoded");
+	// iPoster.setRequestHeader('Content-Type',
+	// 'application/x-www-form-urlencoded; charset=UTF-8');
+	try {
+		iPoster.send(content);
+		if ((iPoster.readyState == 4) && (iPoster.status == 200)) {
+			strResult = iPoster.responseText;
+		} else {
+			strResult = "Error: Can not connect to the server. ";
+		}
+	} catch (err) {
+		return "";
+	}
+
+	iPoster = null;
+	return strResult;
 };
 
-ajax.json.post=function(url,content){
-	  try{
-	    return eval("(" + ajax.post(url,content) + ");");
-	  }
-	  catch(e){
-	    return null;
-	  }
+ajax.json = {};
+ajax.json.get = function(url) {
+	try {
+		return eval("(" + ajax.get(url) + ");");
+	} catch (e) {
+		return null;
+	}
 };
 
+ajax.json.post = function(url, content) {
+	try {
+		return eval("(" + ajax.post(url, content) + ");");
+	} catch (e) {
+		return null;
+	}
+};
 
-//封装的一些方法
+// 封装的一些方法
 var com = {};
 
-com.json = function(str){
-    try {
-        return eval("(" + str + ");");
-    } 
-    catch (e) {
-        return null;
-    }
+com.json = function(str) {
+	try {
+		return eval("(" + str + ");");
+	} catch (e) {
+		return null;
+	}
 };
 /**
  * 清除输入框值以及选框的选中状态
  */
-com.clear = function(){
-	var a=$("#form1 :input");    
-	for(var i=0;i<a.length;i++){ 
-		if(a[i].type=='radio'||a[i].type=='checkbox'){
-			$("[name='"+a[i].name+"']").prop("checked", false);
-		}else{
-			a[i].value='';
+com.clear = function() {
+	var a = $("#form1 :input");
+	for (var i = 0; i < a.length; i++) {
+		if (a[i].type == 'radio' || a[i].type == 'checkbox') {
+			$("[name='" + a[i].name + "']").prop("checked", false);
+		} else {
+			a[i].value = '';
 		}
 	}
 };
-//隐藏某元素（id:需要显示的元素的id属性值）
-com.show = function(id){
-    com.id(id).style.display = 'block';
+// 隐藏某元素（id:需要显示的元素的id属性值）
+com.show = function(id) {
+	com.id(id).style.display = 'block';
 };
 
-//显示某元素（id:需要隐藏的元素的id属性值）
-com.hide = function(id){
-    com.id(id).style.display = 'none';
+// 显示某元素（id:需要隐藏的元素的id属性值）
+com.hide = function(id) {
+	com.id(id).style.display = 'none';
 };
 com.RegExps = {};
 com.RegExps.isNumber = /^[-\+]?\d+(\.\d+)?$/;
@@ -164,117 +175,126 @@ com.RegExps.isTime = /^\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2}$/;
 /**
  * 校验数据
  */
-com.RegExps.verify=function(value,reg){
+com.RegExps.verify = function(value, reg) {
 	return reg.test(value);
 };
 
 /**
  * 获取当前日期
+ * 
  * @return
  */
-function getDate(){
-	var date=new Date();
-	var year=date.getFullYear();
-	var month=date.getMonth()+1;
-	year=year.toString();
-	month=month.toString();
-	return year+"-"+(month.length<2?'0'+month:month)+"-01";
+function getDate() {
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1;
+	year = year.toString();
+	month = month.toString();
+	return year + "-" + (month.length < 2 ? '0' + month : month) + "-01";
 };
 /**
  * 普通的创建下拉框
- * @param curDepartient 默认值
- * @param pkid 数据集主键id
- * @param pname 数据集名称
- * @param eml 页面元素
- * @param method 请求方法
- * @param tip 友好提示
+ * 
+ * @param curDepartient
+ *            默认值
+ * @param pkid
+ *            数据集主键id
+ * @param pname
+ *            数据集名称
+ * @param eml
+ *            页面元素
+ * @param method
+ *            请求方法
+ * @param tip
+ *            友好提示
  */
-function createSel(curDepartient,pkid,pname, eml,method,tip) {
-	eml.empty().append("<option value=''>"+tip+"</option>");
+function createSel(curDepartient, pkid, pname, eml, method, tip) {
+	eml.empty().append("<option value=''>" + tip + "</option>");
 	$.getJSON(method, function(data) {
-		if(!$.isSuccess(data)) return;
-		$.each(data.body, function(i,v){
-			$("<option "+analyzeSelect(v.pkid,curDepartient) +" value="+v.pkid+"></option>")
-			.append(v.pname)
-			.appendTo(eml);
+		if (!$.isSuccess(data))
+			return;
+		$.each(data.body, function(i, v) {
+			$(
+					"<option " + analyzeSelect(v.pkid, curDepartient)
+							+ " value=" + v.pkid + "></option>")
+					.append(v.pname).appendTo(eml);
 		});
-	}); 
-}; 
+	});
+};
 
-function analyzeSelect(id, curDepartient){
-	return curDepartient > 0 && id == curDepartient ? " selected=true " : "" ;
+function analyzeSelect(id, curDepartient) {
+	return curDepartient > 0 && id == curDepartient ? " selected=true " : "";
 }
 
 /**
  * 通用的大弹窗表单循环赋值方法
+ * 
  * @param json
  * @return
  */
 function setValueForForm(json) {
-	var a=$(".details-box table td");    
-	for(var i=0;i<a.length;i++){ 
-//		var iname=a[i].name;
-		var iname=a[i].className;
-		for(var key in json)
-		{
-		    if (iname==key) {
-		    	a[i].innerText=json[key];
+	var a = $(".details-box table td");
+	for (var i = 0; i < a.length; i++) {
+		// var iname=a[i].name;
+		var iname = a[i].className;
+		for ( var key in json) {
+			if (iname == key) {
+				a[i].innerText = json[key];
 			}
 		}
-		 
-//		if(a[i].type=='radio'||a[i].type=='checkbox'){
-//			 var boxes = document.getElementsByName(iname);
-//			 for(var j=0;j<boxes.length;j++){
-//				 if(boxes[j].value == json[iname]){
-//		                boxes[j].checked = true;
-//		           }
-//			    }
-//			if(a[i].value==json[iname]){//单选框
-//		        a[i].checked = true;
-//			}else{
-//				 a[i].checked = false;
-//			}
-//		}else{
-//			a[i].value=json[iname];
-//		}
+
+		// if(a[i].type=='radio'||a[i].type=='checkbox'){
+		// var boxes = document.getElementsByName(iname);
+		// for(var j=0;j<boxes.length;j++){
+		// if(boxes[j].value == json[iname]){
+		// boxes[j].checked = true;
+		// }
+		// }
+		// if(a[i].value==json[iname]){//单选框
+		// a[i].checked = true;
+		// }else{
+		// a[i].checked = false;
+		// }
+		// }else{
+		// a[i].value=json[iname];
+		// }
 	}
 };
 
 /**
  * 通用页面查询
  */
-function commonSearch(requestUrl){
+function commonSearch(requestUrl) {
 	$.ajax({
-		url: requestUrl+"?type=1",
-	    async: false,
-	    data:$("#searchForm").serialize(),
-	    success: function(data) {
-	    	$("#dataList").html(data);
-	    }
+		url : requestUrl + "?type=1",
+		async : false,
+		data : $("#searchForm").serialize(),
+		success : function(data) {
+			$("#dataList").html(data);
+		}
 	});
 };
 
-
-
-
-$(document).keydown(function(e){//屏蔽回退键
-    e = window.event || e;
-    var code = e.keyCode || e.which;
-    if (code == 8) {
-        var src = e.srcElement || e.target;
-        var tag = src.tagName;
-        if (tag != "INPUT" && tag != "TEXTAREA") {
-            e.returnValue = false; 
-            return false;
-        } else if ((tag == "INPUT" || tag == "TEXTAREA") && src.readOnly == true) {
-            e.returnValue = false;
-            return false; 
-        }
-    }
-    if(code==13){//回车键触发搜索功能
-		 $(".input-group-btn button").click();
-	  }
-});
+$(document).keydown(
+		function(e) {// 屏蔽回退键
+			e = window.event || e;
+			var code = e.keyCode || e.which;
+			if (code == 8) {
+				var src = e.srcElement || e.target;
+				var tag = src.tagName;
+				if (tag != "INPUT" && tag != "TEXTAREA") {
+					e.returnValue = false;
+					return false;
+				} else if ((tag == "INPUT" || tag == "TEXTAREA")
+						&& src.readOnly == true) {
+					e.returnValue = false;
+					return false;
+				}
+			}
+			if (code == 13) {// 回车键触发搜索功能
+				$(".input-group-btn button").click();
+			}
+		});
 
 /**
  * 获取权限信息, 传入模块编号及回调函数
@@ -282,7 +302,7 @@ $(document).keydown(function(e){//屏蔽回退键
 function findModuleParameter(moduleCode, initFun) {
 	if (!moduleCode)
 		return;
-	$.getJSON(localhostUrl+'mgr/findModuleParameter', {
+	$.getJSON(localhostUrl + 'mgr/findModuleParameter', {
 		moduleCode : moduleCode
 	}, function(data) {
 		if (!$.isSuccess(data))
@@ -307,7 +327,7 @@ function findModuleParameter(moduleCode, initFun) {
 			$('title').text(
 					data.body.moduleName + ' - ' + data.body.superModuleName);
 		}
-		
+
 		initFun();
 	});
 }
@@ -316,7 +336,7 @@ function findModuleParameter(moduleCode, initFun) {
  * 转到首页
  */
 function href2Index() {
-	window.location.href = localhostUrl+"index.html";
+	window.location.href = localhostUrl + "index.html";
 }
 
 /**
@@ -331,11 +351,11 @@ function exit() {
 			closable : false,
 			message : "正在加载, 请稍等..."
 		});
-		$.getJSON(localhostUrl+'mgr/exit', function(data) {
+		$.getJSON(localhostUrl + 'mgr/exit', function(data) {
 			if (!$.isSuccess(data))
 				return;
-//			webSocket.close();		
-			window.location.href = localhostUrl+"login.html";
+			// webSocket.close();
+			window.location.href = localhostUrl + "login.html";
 		});
 	});
 }
@@ -345,7 +365,7 @@ function exit() {
 function findMenu(moduleCode, initFun) {
 	$
 			.getJSON(
-					localhostUrl+'mgr/findMenu',
+					localhostUrl + 'mgr/findMenu',
 					function(data) {
 						if (!$.isSuccess(data))
 							return;
@@ -379,7 +399,7 @@ function findMenu(moduleCode, initFun) {
  * 获取面包绡
  */
 function findBreadcrumb() {
-	$.post(localhostUrl+'mgr/findBreadcrumb', {
+	$.post(localhostUrl + 'mgr/findBreadcrumb', {
 		moduleCode : moduleCode
 	}, function(data) {
 		var obj = $('ol.breadcrumb').empty();
@@ -405,8 +425,8 @@ function analyzeMenu(code, data) {
 	ul += "<ul class='dropdown-menu'>";
 	$.each(data, function(i, v) {
 		if (v.moduleSuperCode == code)
-			ul += "<li><a href='" +localhostUrl+ v.modulePage + "'>" + v.moduleName
-					+ "</a></li>";
+			ul += "<li><a href='" + localhostUrl + v.modulePage + "'>"
+					+ v.moduleName + "</a></li>";
 	});
 	ul += "</ul>";
 	return ul;
@@ -444,12 +464,10 @@ BootstrapDialog.confirm = function(message, callback) {
 };
 
 /**
- * 有关闭按钮的弹窗
- * (BootstrapDialog.TYPE_INFO or 'type-info' 
-BootstrapDialog.TYPE_PRIMARY or 'type-primary' (default) 
-BootstrapDialog.TYPE_SUCCESS or 'type-success' 
-BootstrapDialog.TYPE_WARNING or 'type-warning' 
-BootstrapDialog.TYPE_DANGER or 'type-danger')
+ * 有关闭按钮的弹窗 (BootstrapDialog.TYPE_INFO or 'type-info'
+ * BootstrapDialog.TYPE_PRIMARY or 'type-primary' (default)
+ * BootstrapDialog.TYPE_SUCCESS or 'type-success' BootstrapDialog.TYPE_WARNING
+ * or 'type-warning' BootstrapDialog.TYPE_DANGER or 'type-danger')
  * 
  */
 BootstrapDialog.alert = function(message, type) {
@@ -478,7 +496,7 @@ BootstrapDialog.msg = function(message, type) {
 		closeabled : false,
 		backdrop : 'static'
 	}).open();
-	setTimeout("hidedg()", 1500);//隐藏弹窗信息
+	setTimeout("hidedg()", 1500);// 隐藏弹窗信息
 };
 function hidedg() {
 	dg.close();
@@ -580,7 +598,7 @@ BootstrapDialog.showModel = function(eml) {
 	// 点击搜索按钮, 弹出正在加载窗口, 调用findListInfo(); 函数获取列表数据!
 	$.search = function() {
 		dialog = BootstrapDialog.loading();
-		page=1;//搜索按钮,页数重置为第一页
+		page = 1;// 搜索按钮,页数重置为第一页
 		findListInfo();
 	};
 	// 判断返回数据的JSON头是成功还是失败
@@ -595,15 +613,15 @@ BootstrapDialog.showModel = function(eml) {
 			// dialog != null){//没有权限或者没有登录
 			// dialog.close();
 			if (data.body == 'UNLOGIN') {
-				dg=BootstrapDialog.show({
+				dg = BootstrapDialog.show({
 					title : "错误",
 					type : BootstrapDialog.TYPE_DANGER,
 					message : '您还没有登录',
 					onhide : function(dialog) {
-						window.location.href =localhostUrl+"login.html";
+						window.location.href = localhostUrl + "login.html";
 					}
 				});
-				setTimeout("hidedg()", 1500);//隐藏弹窗信息
+				setTimeout("hidedg()", 1500);// 隐藏弹窗信息
 				return;
 			}
 		}
@@ -616,40 +634,38 @@ BootstrapDialog.showModel = function(eml) {
 	};
 })(jQuery);
 
-
-
 /**
  * websocket连接
  */
 function connect() {
-	var data=ajax.json.get(localhostUrl+"mgr/getSessionName").body;
-	if(data=='UNLOGIN'){
+	var data = ajax.json.get(localhostUrl + "mgr/getSessionName").body;
+	if (data == 'UNLOGIN') {
 		console.log("未登录--");
 		return;
 	}
-	var flag=ajax.json.get(localhostUrl+"mgr/getSessionFlag");
-	if (flag=="1"){
+	var flag = ajax.json.get(localhostUrl + "mgr/getSessionFlag");
+	if (flag == "1") {
 		console.log("已经启动");
 		return webSocket;
 	}
-	var url="";
+	var url = "";
 	if (window.location.protocol == 'http:') {
 		url = 'ws://';
 	} else {
 		url = 'wss://';
 	}
 	var strFullPath = window.document.location.href;
-	strFullPath= strFullPath.substring(7,strFullPath.lastIndexOf('/'));
-	if (window.WebSocket) {//浏览器支持的话
-		webSocket = new WebSocket(
-				url+strFullPath+"/socketservice/" + username);
-		
+	strFullPath = strFullPath.substring(7, strFullPath.lastIndexOf('/'));
+	if (window.WebSocket) {// 浏览器支持的话
+		webSocket = new WebSocket(url + strFullPath + "/socketservice/"
+				+ username);
+
 		webSocket.onopen = function(event) {
-			ajax.json.post(localhostUrl+"mgr/setSessionFlag", username);
+			ajax.json.post(localhostUrl + "mgr/setSessionFlag", username);
 			console.log("连接建立成功！");
-			webSocket.send("[join]||||"+username);
+			webSocket.send("[join]||||" + username);
 		};
-		//接收消息
+		// 接收消息
 		webSocket.onmessage = function(event) {
 			receiveMess(event.data);
 		};
@@ -657,39 +673,39 @@ function connect() {
 			alert(event.data);
 		};
 
-//		webSocket.onclose = function()
-//		{ 
-//			console.log("连接已关闭..."); 
-//		};
+		// webSocket.onclose = function()
+		// {
+		// console.log("连接已关闭...");
+		// };
 	}
-	
+
 };
 
-//处理接收的消息(json格式)
+// 处理接收的消息(json格式)
 function receiveMess(data) {
 	var message = JSON.parse(data);
-	if (message.type == 'message') {//消息
-		
-	}else if(message.type == 'goOut'){
+	if (message.type == 'message') {// 消息
+
+	} else if (message.type == 'goOut') {
 		alert("此用户在其它终端已经早于您登录,您暂时无法登录");
 		return;
-//		goOut();
-	}else if(message.type == 'goOut'){
-//		$("body").html("");
-//		goOut("您被系统管理员强制下线");
-	}else  if (message.type == 'user_list') {//在线用户
-		
-	}else if (message.type == 'user_join') {//用户上线
-//		userlist = message.list;
-	} else if (message.type == 'user_leave') {//用户下线
-		
+		// goOut();
+	} else if (message.type == 'goOut') {
+		// $("body").html("");
+		// goOut("您被系统管理员强制下线");
+	} else if (message.type == 'user_list') {// 在线用户
+
+	} else if (message.type == 'user_join') {// 用户上线
+	// userlist = message.list;
+	} else if (message.type == 'user_leave') {// 用户下线
+
 	}
-	
+
 };
 
-//用户列表
+// 用户列表
 var userlist = "";
-function getUserlist(){
+function getUserlist() {
 	websocket.send('[getUserlist]||||A');
 	return userlist;
 };
@@ -698,16 +714,16 @@ function getUserlist(){
  * 给所有人发送消息
  */
 function sendAllMessage() {
-	if(webSocket == null) {
+	if (webSocket == null) {
 		alert("请先连接后再发送消息");
 		return;
 	}
 	var msg = document.getElementById("textarea").value;
-	if(msg == "") {
+	if (msg == "") {
 		alert("消息内容不能为空");
 		return;
 	}
-	msg="[ALL]||||"+msg;
+	msg = "[ALL]||||" + msg;
 	document.getElementById("textarea").value = "";
 	webSocket.send(msg);
 };
@@ -716,6 +732,6 @@ function sendAllMessage() {
  * 用户退出
  */
 function logOut() {
-	var msg="[logout]||||A";
+	var msg = "[logout]||||A";
 	webSocket.send(msg);
 };
