@@ -77,14 +77,8 @@ public class RedisSpringProxy {
 	/**
 	 * 清空redis 中的所有数据
 	 */
-	public Long flushAll() {
-		final String key="flushall";
-		return redisTemplate.execute(new RedisCallback<Long>() {
-			@Override
-			public Long doInRedis(RedisConnection connection) {
-				return connection.del(serializeKey(key));
-			}
-		});
+	public void flushAll() {
+		redisTemplate.getConnectionFactory().getConnection().flushAll();
 	}
 
 	/**

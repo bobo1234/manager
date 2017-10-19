@@ -53,7 +53,6 @@ public class ModuleController extends AbstractController {
 	@RequestMapping(value = "addModule")
 	@SecureValid(code = "", desc = "添加菜单信息", type = MethodType.ADD)
 	public JSONReturn addModule(TeModule module, HttpSession httpSession) {
-		System.out.println(module.toString());
 		return moduleService.saveModule(module);
 	}
 	@ResponseBody

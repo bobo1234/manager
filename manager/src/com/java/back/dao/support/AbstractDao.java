@@ -13,9 +13,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.java.back.constant.PageConstant;
-import com.java.back.utils.DateUtil;
-
 public abstract class AbstractDao<T> {
 
 	@Autowired
@@ -23,16 +20,10 @@ public abstract class AbstractDao<T> {
 
 	public abstract Class<T> getEntityClass();
 
-	/**
-	 * 设置当前时间 <br/>
-	 * 格式:2016-05-27 21:45:30
-	 * 
-	 * @return
-	 */
-	public Date setDate() {
-		return DateUtil.StrToTime(DateUtil.getAllDate());
-	}
+	public String getHql = "from " + getEntityClass().getName() + " where 1=1 ";
 
+	// 采用getCurrentSession()创建的session会绑定到当前线程中，而采用openSession()
+	// 创建的session则不会
 	public Session findSession() {
 		return sessionFactory.getCurrentSession();
 	}
@@ -48,17 +39,6 @@ public abstract class AbstractDao<T> {
 	}
 
 	/**
-	 * 查询所有对象并放入二级缓存
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<T> findAlltoCache() {
-		return findSession().createCriteria(getEntityClass())
-				.setCacheable(true).list();
-	}
-
-	/**
 	 * 根据参数查询对象
 	 * 
 	 * @param pro
@@ -71,20 +51,6 @@ public abstract class AbstractDao<T> {
 	public T findUniqueByProperty(String pro, Object val) {
 		return (T) findSession().createCriteria(getEntityClass())
 				.add(Restrictions.eq(pro, val)).uniqueResult();
-	}
-
-	/**
-	 * 根据参数查询对象并放入二级缓存
-	 * 
-	 * @param pro
-	 * @param val
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public T findUniqueByPropertytoCache(String pro, Object val) {
-		return (T) findSession().createCriteria(getEntityClass())
-				.add(Restrictions.eq(pro, val)).setCacheable(true)
-				.uniqueResult();
 	}
 
 	/**
@@ -137,29 +103,40 @@ public abstract class AbstractDao<T> {
 	}
 
 	/**
-	 * 根据不是string格式的参数删除
+	 * 根据in参数删除
 	 * 
 	 * @param pro
 	 * @param value
 	 */
-	public int deleteByProperty(String pro, Object value) {
+	public int deleteByPropertyIn(String pro, String value) {
 		String query = "delete from " + getEntityClass().getName() + " where "
-				+ pro + "=" + value.toString();
+				+ pro + " in " + value;
 		return findSession().createQuery(query).executeUpdate();
 	}
 
 	/**
-	 * 根据类型为string形式的参数删除
+	 * 根据类型为long ,int形式的参数删除
 	 * 
 	 * @param pro
 	 * @param val
 	 */
 	public int deleteByPropertyString(String pro, Object val) {
 		String query = "delete from " + getEntityClass().getName() + " where "
+				+ pro + "=" + val+ "";
+		return findSession().createQuery(query).executeUpdate();
+	}
+	/**
+	 * 删除数据
+	 * @param pro
+	 * @param val
+	 * @return
+	 */
+	public int deleteByProperty(String pro, Object val) {
+		String query = "delete from " + getEntityClass().getName() + " where "
 				+ pro + "='" + val.toString() + "'";
 		return findSession().createQuery(query).executeUpdate();
 	}
-
+	
 	/**
 	 * 根据id查询单个对象
 	 * 
@@ -233,7 +210,7 @@ public abstract class AbstractDao<T> {
 	}
 
 	/**
-	 * 根据hql查询条
+	 * 根据hql查询条数
 	 * 
 	 * @param hql
 	 * @return
@@ -255,8 +232,7 @@ public abstract class AbstractDao<T> {
 	public List<Object[]> querySqlForList(String sql, int page) {
 		// TODO Auto-generated method stub
 		Query query = this.findSession().createSQLQuery(sql);
-		query.setFirstResult((page - 1) * PageConstant.PAGE_LIST);
-		query.setMaxResults(PageConstant.PAGE_LIST);
+		query.setMaxResults(page);
 		List<Object[]> list = query.list();
 		return list;
 	}
@@ -266,15 +242,14 @@ public abstract class AbstractDao<T> {
 	 * 
 	 * @param hql
 	 * @param params
-	 * @param page
+	 * @param pagesize
 	 * @return
 	 */
-	public List<T> queryHqlForList(String hql, Object[] params, int page) {
+	public List<T> queryHqlForList(String hql, Object[] params, int pagesize) {
 		// TODO Auto-generated method stub
 		Query query = this.findSession().createQuery(hql);
 		query = setParamForquery(query, params);
-		query.setFirstResult((page - 1) * PageConstant.PAGE_LIST);
-		query.setMaxResults(PageConstant.PAGE_LIST);
+		query.setMaxResults(pagesize);
 		return query.list();
 	}
 
@@ -357,20 +332,6 @@ public abstract class AbstractDao<T> {
 	public T get(Serializable id) {
 		// TODO Auto-generated method stub
 		return (T) findSession().get(getEntityClass(), id);
-	}
-
-	/**
-	 * 根据主键获取单个对象
-	 * 
-	 * @param id
-	 * @param t
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getModel(Serializable id, Class<T> beanCalss) {
-		// TODO Auto-generated method stub
-		T bean = (T) findSession().get(beanCalss, id);
-		return bean;
 	}
 
 	/**

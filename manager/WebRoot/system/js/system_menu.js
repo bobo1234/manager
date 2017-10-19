@@ -72,8 +72,11 @@ function getMenu() {
         }
     });
 }
+/**
+ * 只有刷新,树形菜单起作用
+ */
 function findListInfo() {
-	setTimeout("window.location.reload()", 1500);
+	setTimeout("history.go(0)", 1500);
 }
 /**
  * 解析数据列表的操作按钮

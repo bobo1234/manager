@@ -185,7 +185,7 @@ public class ModuleServiceImpl implements ModuleService {
 	/**
 	 * 给角色设置权限菜单
 	 */
-	@CacheEvict(value = { "findMenu" ," findModuleParameter"}, allEntries = true)
+	@CacheEvict(value = { "findMenu" ,"findModuleParameter"}, allEntries = true)
 	@Transactional
 	public JSONReturn setRoleSecureValid(long rold, String code, int type,
 			boolean add) {
@@ -286,7 +286,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 	
 	// allEntries是boolean类型，表示是否需要清除缓存中的所有元素。
-	@CacheEvict(value = { "findMenu" ," findModuleParameter"}, allEntries = true)
+	@CacheEvict(value = { "findMenu" ,"findModuleParameter"}, allEntries = true)
 	public JSONReturn saveModule(TeModule module) {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(getMaxId(
@@ -301,6 +301,10 @@ public class ModuleServiceImpl implements ModuleService {
 			}
 			module.setModuleCode(getfomatNum(id + 1, 2));
 		} else {// 二级菜单
+			int i = moduleDAO.findCountByProperty("modulePage", module.getModulePage());
+			if (i>0) {
+				return JSONReturn.buildFailure("新增失败,菜单地址已存在!");
+			}
 			Object object = getMaxId("select max(moduleCode) from te_module where moduleSuperCode"
 					+ StringUtil.formatEqual(module.getModuleSuperCode()));
 			if (object == null) {// 没有二级菜单
@@ -330,7 +334,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	// @CacheEvict 注释来标记要清空缓存的方法，当这个方法被调用后，即会清空缓存。注意其中一个
-	@CacheEvict(value = { "findMenu" ," findModuleParameter"}, allEntries = true)
+	@CacheEvict(value = { "findMenu" ,"findModuleParameter"}, allEntries = true)
 	public JSONReturn deleteModule(String id) {
 		// TODO Auto-generated method stub
 		TeModule module = moduleDAO.get(Long.parseLong(id));

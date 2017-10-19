@@ -1,11 +1,11 @@
 package com.java.back.constant;
 
 /**
- * 会员相关的状态码
+ * 俱乐部相关常量
  * 
  * @author gyb
  */
-public class MemberConst {
+public class ClubConst {
 
 	/**
 	 * 黄铜会员
@@ -58,5 +58,29 @@ public class MemberConst {
 	 * 横板
 	 */
 	public static final int HENG = 2;
-
+	
+	/**
+	 * 会员卡可用
+	 */
+	public static final int usable = 0;
+	/**
+	 * 会员卡不可用
+	 */
+	public static final int disabled = 1;
+	
+	/**
+	 * 根据 消费情况判断会员等级
+	 * @param money
+	 * @return
+	 */
+	public static int getGrade(Long money) {
+		if (money>5000) {
+			return ZUAN;
+		}else if (money>2000) {
+			return JIN;
+		}else if (money>500) {
+			return YIN;
+		}
+		return TONG;
+	}
 }

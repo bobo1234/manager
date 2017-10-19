@@ -18,7 +18,7 @@ public class MyTest extends RedisSpringProxy {
 	@Test
 	public void redis() {
 //		 flushDB();
-//		flushAll();
+		flushAll();
 		Set<Serializable> allKeys = getAllKeys();
 		for (Serializable serializable : allKeys) {
 			System.out.println(serializable);

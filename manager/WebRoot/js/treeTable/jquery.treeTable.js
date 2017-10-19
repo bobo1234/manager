@@ -2,12 +2,7 @@
 * 树表组件
 */
 (function ($) {
-	window.SITE_URL = window.SITE_URL || '';
-	if (document.location.href.indexOf('http://') != 0)	{
-		var path = '../js/treeTable/';
-	} else {
-		var path = localhostUrl + 'js/treeTable/';
-	}
+	var path = localhostUrl + 'js/treeTable/';
 
     $.fn.treeTable = function (opts) {
         opts = $.extend({

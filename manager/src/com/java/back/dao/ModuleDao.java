@@ -25,7 +25,7 @@ public class ModuleDao extends AbstractDao<TeModule> {
 		query.append("where tar.roleLabel = trm.roleLabel and ");
 		query.append("(tm.moduleCode = trm.moduleCode or tm.moduleCode = trm.mosuleSuperCode) ");
 		query.append("and trm.finds=1 and tar.acctName = ?)");
-		return findSession().createQuery(query.toString()).setString(0, acctName).list();//放入二级缓存
+		return findSession().createQuery(query.toString())
+				.setString(0, acctName).list();// 放入二级缓存
 	}
-
 }
