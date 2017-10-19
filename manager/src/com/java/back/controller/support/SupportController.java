@@ -1,5 +1,6 @@
 package com.java.back.controller.support;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,8 @@ public class SupportController extends AbstractController {
 	@Autowired
 	private EmployeesService employeesService;
 
+	@Autowired
+	private HttpServletRequest request;
 	/**
 	 * 验证码
 	 * @param request
@@ -163,6 +166,83 @@ public class SupportController extends AbstractController {
 				.buildFailureWithEmptyBody();
 	}
 
+	/**
+	 * 上传文件的方法
+	 * @param imgFile
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "uploadFile")
+	public JSONReturn uploadFile(@RequestParam("files") MultipartFile imgFile,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		
+		return JSONReturn.buildSuccess("ok");
+	}
+	
+	@RequestMapping("filesUpload")
+	public String filesUpload(@RequestParam("files") MultipartFile[] files) {
+		//判断file数组不能为空并且长度大于0
+		if(files!=null&&files.length>0){
+			//循环获取file数组中得文件
+			for(int i = 0;i<files.length;i++){
+				MultipartFile file = files[i];
+				//保存文件
+				saveFile(file);
+			}
+		}
+		// 重定向
+		return "redirect:/list.html";
+	}
+
+	/***
+	 * 保存文件
+	 * @param file
+	 * @return
+	 */
+	private boolean saveFile(MultipartFile file) {
+		// 判断文件是否为空
+		if (!file.isEmpty()) {
+			try {
+				// 文件保存路径
+				String filePath = request.getSession().getServletContext().getRealPath("/") + "upload/"
+						+ file.getOriginalFilename();
+				// 转存文件
+				file.transferTo(new File(filePath));
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	/***
+	 * 上传文件 用@RequestParam注解来指定表单上的file为MultipartFile
+	 * 
+	 * @param file
+	 * @return
+	 */
+	@RequestMapping("fileUpload")
+	public String fileUpload(@RequestParam("file") MultipartFile file) {
+		// 判断文件是否为空
+		if (!file.isEmpty()) {
+			try {
+				// 文件保存路径
+				String filePath = request.getSession().getServletContext().getRealPath("/") + "upload/"
+						+ file.getOriginalFilename();
+				// 转存文件
+				file.transferTo(new File(filePath));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		// 重定向
+		return "redirect:/list.html";
+	}
 	@ResponseBody
 	@RequestMapping(value = "getSessionFlag")
 	public String getSessionFlag(HttpServletRequest request,

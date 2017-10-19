@@ -1,4 +1,4 @@
-package com.java.back.utils;
+package com.java.back.utils.fileUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

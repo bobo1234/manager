@@ -3,7 +3,10 @@ package com.java.back.utils;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -12,7 +15,7 @@ import sun.misc.BASE64Encoder;
  * 字符串工具类
  * 
  * @author
- *
+ * 
  */
 public class StringUtil {
 	public static String fznull(String str) {
@@ -28,9 +31,14 @@ public class StringUtil {
 	 * @return true=空,false=不为空;
 	 */
 	public static boolean isEmpty(Object object) {
-		if (object == null || "".equals(object) || "undefined".equals(object) || "null".equals(object)
-				|| (object instanceof java.util.List && (((List<?>) object).size() == 0))
-				|| (object instanceof java.util.Map && (((Map<?, ?>) object).size() == 0))) {
+		if (object == null
+				|| "".equals(object)
+				|| "undefined".equals(object)
+				|| "null".equals(object)
+				|| (object instanceof java.util.List && (((List<?>) object)
+						.size() == 0))
+				|| (object instanceof java.util.Map && (((Map<?, ?>) object)
+						.size() == 0))) {
 			return true;
 		} else {
 			return false;
@@ -50,15 +58,22 @@ public class StringUtil {
 			return false;
 		}
 	}
+
 	/**
 	 * 组装时间sql
-	 * @param field 时间字段的名称
-	 * @param beginTime (格式为:2017-10-20)
-	 * @param endTime (格式为:2017-10-22)
+	 * 
+	 * @param field
+	 *            时间字段的名称
+	 * @param beginTime
+	 *            (格式为:2017-10-20)
+	 * @param endTime
+	 *            (格式为:2017-10-22)
 	 * @return
 	 */
-	public static String formatInterDate(String field,String beginTime,String endTime) {
-		String sql=" and "+field+" >'"+beginTime+" 00:00:00' and "+field+"<'"+endTime+" 24:59:59'" ;
+	public static String formatInterDate(String field, String beginTime,
+			String endTime) {
+		String sql = " and " + field + " >'" + beginTime + " 00:00:00' and "
+				+ field + "<'" + endTime + " 24:59:59'";
 		return sql;
 	}
 
@@ -89,6 +104,7 @@ public class StringUtil {
 			return null;
 		}
 	}
+
 	/**
 	 * 不等查询
 	 * 
@@ -244,7 +260,7 @@ public class StringUtil {
 		}
 		return s;
 	}
-	
+
 	/**
 	 * @Description 获取32位主键id
 	 * @date 2017年6月16日
@@ -253,5 +269,65 @@ public class StringUtil {
 	public static String getPrimaryKeyUuid() {
 		String uuid = UUID.randomUUID().toString().trim().replaceAll("-", "");
 		return uuid;
+	}
+
+	/**
+	 * 前台get请求中文乱码
+	 */
+	public static String encodeStr(String str) {
+		try {
+			return new String(str.getBytes("ISO-8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 验证邮箱
+	 * 
+	 * @param email
+	 * @return
+	 */
+	public static boolean checkEmail(String email) {
+		boolean flag = false;
+		try {
+			String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+			Pattern regex = Pattern.compile(check);
+			Matcher matcher = regex.matcher(email);
+			flag = matcher.matches();
+		} catch (Exception e) {
+			flag = false;
+		}
+		return flag;
+	}
+
+	/**
+	 * 验证手机号码
+	 * 
+	 * @param mobiles
+	 * @return
+	 */
+	public static boolean checkMobileNumber(String mobileNumber) {
+		boolean flag = false;
+		try {
+			Pattern regex = Pattern
+					.compile("^(((13[0-9])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8})|(0\\d{2}-\\d{8})|(0\\d{3}-\\d{7})$");
+			Matcher matcher = regex.matcher(mobileNumber);
+			flag = matcher.matches();
+		} catch (Exception e) {
+			flag = false;
+		}
+		return flag;
+	}
+
+	/**
+	 * 随机生成六位数验证码
+	 * 
+	 * @return
+	 */
+	public static int getRandomNum() {
+		Random r = new Random();
+		return r.nextInt(900000) + 100000;// (Math.random()*(999999-100000)+100000)
 	}
 }

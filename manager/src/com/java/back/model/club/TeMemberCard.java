@@ -35,9 +35,21 @@ public class TeMemberCard extends BaseBean {
 	 */
 	private int residuetimes;
 	/**
+	 * 购买会员卡价钱
+	 */
+	private int price;
+	/**
 	 * 是否作废
 	 */
 	private int ifuseless;
+	
+	
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
 	public String getId() {
 		return id;
 	}

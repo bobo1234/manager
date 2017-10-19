@@ -60,20 +60,27 @@ public class ClubConst {
 	public static final int HENG = 2;
 	
 	/**
-	 * 会员卡可用
+	 * 会员卡未使用
 	 */
-	public static final int usable = 0;
+	public static final int STATE_UNUSED=1;
+	
 	/**
-	 * 会员卡不可用
+	 * 会员卡已使用
 	 */
-	public static final int disabled = 1;
+	public static final int STATE_USED=2;
+	
+	/**
+	 * 会员卡已过期
+	 */
+	public static final int STATE_OVERDUE=3;
+	
 	
 	/**
 	 * 根据 消费情况判断会员等级
 	 * @param money
 	 * @return
 	 */
-	public static int getGrade(Long money) {
+	public static int getGrade(int money) {
 		if (money>5000) {
 			return ZUAN;
 		}else if (money>2000) {

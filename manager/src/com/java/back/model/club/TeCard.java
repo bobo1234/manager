@@ -2,6 +2,8 @@ package com.java.back.model.club;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,19 +35,19 @@ public class TeCard extends BaseBean {
 	/**
 	 * 有效期
 	 */
-	private String validtime;
+	private int validtime;
 	/**
 	 * 会员卡价钱
 	 */
-	private Long price;
+	private int price;
 	/**
 	 * 创建时间
 	 */
-	private String createtime;
+	private Date createtime;
 	/**
 	 * 类型下会员卡数量
 	 */
-	private String cardamount;
+	private Long cardamount;
 	/**
 	 * 总次数
 	 */
@@ -62,25 +64,24 @@ public class TeCard extends BaseBean {
 	public void setTypename(String typename) {
 		this.typename = typename;
 	}
-	public String getValidtime() {
+	public int getValidtime() {
 		return validtime;
 	}
-	public void setValidtime(String validtime) {
+	public void setValidtime(int validtime) {
 		this.validtime = validtime;
 	}
-	public String getCreatetime() {
+	public Date getCreatetime() {
 		return createtime;
 	}
-	public void setCreatetime(String createtime) {
+	public void setCreatetime(Date createtime) {
 		this.createtime = createtime;
 	}
-	public String getCardamount() {
+	public Long getCardamount() {
 		return cardamount;
 	}
-	public void setCardamount(String cardamount) {
+	public void setCardamount(Long cardamount) {
 		this.cardamount = cardamount;
 	}
-	
 	public int getUsertimes() {
 		return usertimes;
 	}
@@ -90,10 +91,10 @@ public class TeCard extends BaseBean {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public Long getPrice() {
+	public int getPrice() {
 		return price;
 	}
-	public void setPrice(Long price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
 	public TeCard() {
