@@ -1,4 +1,4 @@
-package com.java.back.model;
+package com.java.back.model.club;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,6 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.java.back.model.BaseBean;
 
 /**
  * 会员,会员卡关系表

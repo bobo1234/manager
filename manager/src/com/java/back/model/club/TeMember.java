@@ -1,4 +1,4 @@
-package com.java.back.model;
+package com.java.back.model.club;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.java.back.model.BaseBean;
 
 /**
  * 俱乐部会员表

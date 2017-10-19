@@ -1,4 +1,4 @@
-package com.java.back.model;
+package com.java.back.model.club;
 
 import java.util.Date;
 
@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.java.back.model.BaseBean;
 
 /**
  * 会员,消费会员卡历史表
