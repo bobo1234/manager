@@ -23,13 +23,12 @@ function getRealPath() {
 //	var localhostPaht = curWwwPath.substring(0, pos);
 	// 获取带"/"的项目名，如：/myproj
 	var projectName = pathName
-			.substring(0, pathName.substr(1).indexOf('/') + 1);
+			.substring(0, pathName.substr(1).indexOf('/') + 2);
 	// 得到了 http://localhost:8083/myproj
 //	var realPath = localhostPaht + projectName;
-	return projectName+"/";
+	return projectName;
 };
 $(function() {
-	getRealPath();
 	var url = window.location.pathname;
 	var purl = window.location.href;
 	url = url.substring(m.length, url.length);
