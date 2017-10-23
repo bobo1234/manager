@@ -39,7 +39,7 @@ public class TeMemberCard extends BaseBean {
 	 */
 	private int price;
 	/**
-	 * 是否作废
+	 * 是否作废(0:正常,1:作废)
 	 */
 	private int ifuseless;
 	

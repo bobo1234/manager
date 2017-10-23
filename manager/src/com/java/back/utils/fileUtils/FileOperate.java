@@ -1,5 +1,6 @@
 package com.java.back.utils.fileUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +14,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.java.back.utils.SpringContextUtil;
 
 import sun.misc.BASE64Decoder;
 
@@ -22,9 +33,43 @@ import sun.misc.BASE64Decoder;
  * @author JYD
  * 
  */
+@SuppressWarnings("serial")
 public class FileOperate implements Serializable {
 	public FileOperate() {
 		System.out.println("init FileOperate");
+	}
+
+	private final String imgPath = "/upload/img/";
+
+	/**
+	 * 上传文件接口
+	 * 
+	 * @param file
+	 * @param request
+	 * @return
+	 */
+	public static String UploadFile(MultipartFile file,
+			HttpServletRequest request) {
+		// 文件保存路径
+		try {
+			String imgName = file.getOriginalFilename();
+			String extensionName = imgName.substring(imgName.lastIndexOf('.'));// 后缀名
+			// imgName = new Date().getTime() + extensionName;// 重新定义文件名称
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+			imgName = df.format(new Date()) + "_" + new Random().nextInt(1000)
+					+ "." + extensionName;
+			String rootPath = request.getSession().getServletContext()
+					.getRealPath("");
+			File ufile = new File(rootPath + "/upload/file/" + imgName);
+			if (!ufile.exists())
+				ufile.mkdirs();
+			file.transferTo(ufile);
+			return "/upload/file/" + imgName;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	/**
@@ -74,34 +119,40 @@ public class FileOperate implements Serializable {
 	}
 
 	/**
-	 * 对字节数组字符串进行Base64解码并生成图片
+	 * 对字节数组字符串进行Base64解码并生成图片(后缀名不变)
 	 * 
 	 * @param imgStr
 	 *            Base64字符串
-	 * @param imgFilePath
-	 *            生成图片保存路径
+	 * @param imgName
+	 *            图片名称
+	 * @param request
 	 * @return boolean
 	 */
-	public static boolean saveCardImage(String imgStr, String imgFilePath) {
-		if (imgStr == null || imgStr.length() < 10) {
+	public static boolean saveCardImage(String base64, String imgName,
+			HttpServletRequest request) {
+		if (base64 == null) {
 			return false;
 		}
-		String hostPath = FileOperate.class.getClassLoader().getResource("")
-				.getPath();
-		int index = hostPath.indexOf("WEB-INF");
-		String path = hostPath.substring(0, index - 1);
-		imgFilePath = path + imgFilePath;
+		if (base64.indexOf("base64") != -1) {
+			base64 = base64.substring(base64.indexOf("base64") + 7,
+					base64.length());
+		}
+		String extensionName = imgName.substring(imgName.lastIndexOf('.'));
+		imgName = new Date().getTime() + extensionName;
+		String rootPath = request.getSession().getServletContext()
+				.getRealPath("");
+		extensionName = rootPath + "/upload/img/" + imgName;
 		BASE64Decoder decoder = new BASE64Decoder();
 		try {
-			byte[] bytes = decoder.decodeBuffer(imgStr);
+			byte[] bytes = decoder.decodeBuffer(base64);
 			for (int i = 0; i < bytes.length; ++i) {
 				if (bytes[i] < 0) {
 					bytes[i] += 256;
 				}
 			}
-			File file = new File(imgFilePath);
+			File file = new File(extensionName);
 			if (!file.exists()) {
-				file.createNewFile();
+				file.getParentFile().mkdir();
 			}
 			OutputStream out = new FileOutputStream(file);
 			out.write(bytes);
@@ -112,6 +163,71 @@ public class FileOperate implements Serializable {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	/**
+	 * @Descriptionmap 对字节数组字符串进行Base64解码并生成图片(格式皆转为jpg)
+	 * @param base64
+	 *            图片Base64数据
+	 * @param path
+	 *            图片路径以及名称
+	 * @return
+	 */
+	public static boolean base64ToImage(String base64, String path) {
+		// 图像数据为空
+		if (base64 == null) {
+			return false;
+		}
+		if (base64.indexOf("base64") != -1) {
+			base64 = base64.substring(base64.indexOf("base64") + 7,
+					base64.length());
+		}
+		// Base64解码
+		BASE64Decoder decoder = new BASE64Decoder();
+		try {
+			byte[] bytes = decoder.decodeBuffer(base64);
+			for (int i = 0; i < bytes.length; i++) {
+				// 调整异常数据
+				if (bytes[i] < 0) {
+					bytes[i] += 256;
+				}
+			}
+			// 生成jpeg图片
+			OutputStream out = new FileOutputStream(path);
+			out.write(bytes);
+			out.flush();
+			out.close();
+			// 非jpg格式的图片强转为jpg
+			if (base64.indexOf("image/jpeg") == -1) {
+				imageToJPG(path, path);
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 将图片格式转成jpg的支持( GIF->JPG GIF->PNG PNG->GIF(X) PNG->JPG)
+	 * 
+	 * @param src1
+	 * @param result
+	 * @throws IOException
+	 */
+	public static void imageToJPG(String src1, String result)
+			throws IOException {
+		File f = new File(src1);
+		f.canRead();
+		BufferedImage src = ImageIO.read(f);
+		ImageIO.write(src, "jpg", new File(result));
+	}
+
+	public static void main(String[] args) {
+		// String
+		// imgStr="base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC";
+		String imgStr = "";
+		base64ToImage(imgStr, "E:\\aaa.jpg");
 	}
 
 	/**

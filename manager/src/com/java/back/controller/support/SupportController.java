@@ -1,6 +1,5 @@
 package com.java.back.controller.support;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +26,8 @@ import com.java.back.service.ModuleService;
 import com.java.back.service.PositionService;
 import com.java.back.support.JSONReturn;
 import com.java.back.support.RandomValidateCode;
+import com.java.back.utils.StringUtil;
+import com.java.back.utils.fileUtils.FileOperate;
 
 @Scope
 @Controller
@@ -45,8 +46,10 @@ public class SupportController extends AbstractController {
 
 	@Autowired
 	private HttpServletRequest request;
+
 	/**
 	 * 验证码
+	 * 
 	 * @param request
 	 * @param response
 	 */
@@ -56,6 +59,15 @@ public class SupportController extends AbstractController {
 		RandomValidateCode.getRandcode(request, response);
 	}
 
+	/**
+	 * 用户登录
+	 * 
+	 * @param name
+	 * @param pass
+	 * @param verify
+	 * @param request
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "0/acctLogin")
 	public JSONReturn login(@RequestParam String name,
@@ -74,9 +86,10 @@ public class SupportController extends AbstractController {
 	public JSONReturn findBreadcrumb(String moduleCode) {
 		return moduleService.findBreadcrumb(moduleCode);
 	}
-	
+
 	/**
 	 * 用户退出
+	 * 
 	 * @param httpSession
 	 * @param request
 	 * @return
@@ -124,7 +137,7 @@ public class SupportController extends AbstractController {
 	 * @param imgFile
 	 * @param request
 	 * @param response
-	 * @return
+	 * @return rootPath + "/upload/img/" + imgName
 	 * @throws Exception
 	 */
 	@ResponseBody
@@ -161,88 +174,32 @@ public class SupportController extends AbstractController {
 			HttpServletResponse response) {
 		String userName = (String) request.getSession().getAttribute(
 				SessionKey.MODULEACCTNAME);
-		return StringUtils.isNotBlank(userName)||!userName.equals("UNLOGIN")? JSONReturn
-				.buildSuccess(userName):JSONReturn
+		return StringUtils.isNotBlank(userName) || !userName.equals("UNLOGIN") ? JSONReturn
+				.buildSuccess(userName) : JSONReturn
 				.buildFailureWithEmptyBody();
-	}
-
-	/**
-	 * 上传文件的方法
-	 * @param imgFile
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@ResponseBody
-	@RequestMapping(value = "uploadFile")
-	public JSONReturn uploadFile(@RequestParam("files") MultipartFile imgFile,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		
-		return JSONReturn.buildSuccess("ok");
-	}
-	
-	@RequestMapping("filesUpload")
-	public String filesUpload(@RequestParam("files") MultipartFile[] files) {
-		//判断file数组不能为空并且长度大于0
-		if(files!=null&&files.length>0){
-			//循环获取file数组中得文件
-			for(int i = 0;i<files.length;i++){
-				MultipartFile file = files[i];
-				//保存文件
-				saveFile(file);
-			}
-		}
-		// 重定向
-		return "redirect:/list.html";
-	}
-
-	/***
-	 * 保存文件
-	 * @param file
-	 * @return
-	 */
-	private boolean saveFile(MultipartFile file) {
-		// 判断文件是否为空
-		if (!file.isEmpty()) {
-			try {
-				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "upload/"
-						+ file.getOriginalFilename();
-				// 转存文件
-				file.transferTo(new File(filePath));
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
 	}
 
 	/***
 	 * 上传文件 用@RequestParam注解来指定表单上的file为MultipartFile
 	 * 
 	 * @param file
-	 * @return
+	 * @return 成功:返回根据时间戳重新命名的文件路径信息
+	 *         <p/>
+	 *         失败:返回上传失败
 	 */
 	@RequestMapping("fileUpload")
-	public String fileUpload(@RequestParam("file") MultipartFile file) {
+	@ResponseBody
+	public JSONReturn fileUpload(@RequestParam("file") MultipartFile file) {
 		// 判断文件是否为空
 		if (!file.isEmpty()) {
-			try {
-				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "upload/"
-						+ file.getOriginalFilename();
-				// 转存文件
-				file.transferTo(new File(filePath));
-			} catch (Exception e) {
-				e.printStackTrace();
+			String uploadFile = FileOperate.UploadFile(file, request);
+			if (StringUtil.isNotEmpty(uploadFile)) {
+				return JSONReturn.buildSuccess(uploadFile);
 			}
 		}
-		// 重定向
-		return "redirect:/list.html";
+		return JSONReturn.buildFailure("上传失败");
 	}
+
 	@ResponseBody
 	@RequestMapping(value = "getSessionFlag")
 	public String getSessionFlag(HttpServletRequest request,

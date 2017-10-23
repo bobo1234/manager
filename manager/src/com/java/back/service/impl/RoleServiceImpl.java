@@ -19,10 +19,10 @@ import com.java.back.field.TeRoleField;
 import com.java.back.model.TeRole;
 import com.java.back.service.RoleService;
 import com.java.back.support.JSONReturn;
+import com.java.back.utils.Common;
 import com.java.back.utils.CompareUtil;
 import com.java.back.utils.DateTimeUtil;
 import com.java.back.utils.PageUtils;
-import com.java.back.utils.SupportUtil;
 
 @Scope
 @Service
@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
 		role.setCreator(acctName);
 		role.setRoleDescription(desc);
 		role.setRoleName(roleName);
-		role.setRoleLabel(SupportUtil.findUUID());
+		role.setRoleLabel(Common.GetUUID());
 		roleDao.save(role);
 		return JSONReturn.buildSuccess("添加成功!");
 	}

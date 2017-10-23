@@ -4,7 +4,11 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * 向前台写入
+ * @author JYD
+ *
+ */
 public class ResponseUtil {
 
 	public static void write(HttpServletResponse response,Object o)throws Exception{

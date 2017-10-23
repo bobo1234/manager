@@ -32,7 +32,6 @@ public class SpringContextUtil implements ApplicationContextAware {
 	public static <T> T getBean(Class T) throws BeansException {
 		return (T) applicationContext.getBean(T);
 	}
-
 	/**
 	 * 获取request
 	 * 

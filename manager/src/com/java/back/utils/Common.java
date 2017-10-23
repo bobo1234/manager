@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class Common {
 	/**
@@ -168,18 +171,6 @@ public class Common {
 		}
 	}
 
-	/**
-	 * 获取bean
-	 * 
-	 * @param beanId
-	 * @return
-	 */
-	public static Object getSpringBean(String beanId) {
-		// Spring配置文件的路径
-		ApplicationContext ctx = new ClassPathXmlApplicationContext(
-				"spring-webservice.xml");
-		return ctx.getBean(beanId);
-	}
 
 	private static Logger logger = Logger.getLogger(Common.class);
 
@@ -294,5 +285,16 @@ public class Common {
 		// System.out.println("Server ready...");
 		 getLinuxLocalIp();
 
+	}
+	/**
+	 * 获取request
+	 * 
+	 * @return
+	 */
+	public static HttpServletRequest getRequest() {
+		RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+		HttpServletRequest request = ((ServletRequestAttributes) ra)
+				.getRequest();
+		return request;
 	}
 }

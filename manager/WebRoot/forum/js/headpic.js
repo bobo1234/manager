@@ -1,9 +1,10 @@
-var moduleCode = '0';
-
+/**
+ * 页面初始化加载的方法
+ */
 function initFun() {
-	
 	if (secure.find) {
 		dialog = BootstrapDialog.loading();
+		dialog.close();
 //		findListInfo();
 	}
 	if (!secure.add) {

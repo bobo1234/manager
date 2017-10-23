@@ -5,6 +5,9 @@ var moduleCode = "";
 var curRoleId;
 var webSocket;// 通信
 var m = getRealPath();
+var com = {};
+
+
 
 var type = {};
 type.FIND = 1;
@@ -116,6 +119,20 @@ ajax.json.get = function(url) {
 	}
 };
 
+com.includeJS = function(pathStr){
+    var sc = document.createElement("script");
+    sc.type = "text/javascript";
+    sc.src = pathStr;
+    document.getElementsByTagName("head")[0].appendChild(sc);
+}
+
+com.includeCSS = function(pathStr){
+    var cs = document.createElement("link")
+    cs.rel = "stylesheet";
+    cs.type = "text/css";
+    cs.href = pathStr;
+    document.getElementsByTagName("head")[0].appendChild(cs);
+}
 ajax.json.post = function(url, content) {
 	try {
 		return eval("(" + ajax.post(url, content) + ");");
@@ -125,7 +142,6 @@ ajax.json.post = function(url, content) {
 };
 
 // 封装的一些方法
-var com = {};
 
 com.json = function(str) {
 	try {
