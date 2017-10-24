@@ -14,6 +14,16 @@ function initFun() {
 		$('button.add-btn').removeClass('hide');
 	}
 }
+
+/**
+ * 显示上传图片的窗口
+ */
+function showAddBox(){
+	$('.empty').removeClass('empty');
+	$('input.addRoleName').val('');
+	$('textarea.addRoleDesc').val('');
+	BootstrapDialog.showModel($('div.add-box'));
+}
 /*
  * 获取部门列表 
  *  
