@@ -159,7 +159,7 @@ public class FileOperations {
 	}
 
 	// 删除文件
-	public boolean delefile(String path, String filename) {
+	public static boolean delefile(String path, String filename) {
 		boolean bool = true;
 		try {
 			File attachfile = new File(path + "/" + filename);

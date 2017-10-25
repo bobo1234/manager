@@ -1,10 +1,11 @@
 package com.java.back.model.forum;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -21,7 +22,8 @@ public class TeHeadpic extends BaseBean {
 
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
+//	@GeneratedValue(strategy = IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "ID", unique = true, nullable = false)
 	private long id;
 	/**
@@ -40,7 +42,18 @@ public class TeHeadpic extends BaseBean {
 	 * 是否可用
 	 */
 	private int ifuseless;
+	/**
+	 * 创建时间
+	 */
+	@Column(updatable = false)  
+	private Date createtime;
 	
+	public Date getCreatetime() {
+		return createtime;
+	}
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
+	}
 	public int getIfuseless() {
 		return ifuseless;
 	}

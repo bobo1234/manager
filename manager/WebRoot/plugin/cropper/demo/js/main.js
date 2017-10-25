@@ -204,19 +204,16 @@ $(function () {
     // uploadImg
     $('#uploadImg').on('click', function () {
     	if ($($image).cropper('getCroppedCanvas') == null)  return;
-        var base64 = $image.cropper('getCroppedCanvas').toDataURL('base64', 0.1);
-        console.info();
+//        var base64 = $image.cropper('getCroppedCanvas').toDataURL('base64', 1);
+        var base64 = $image.cropper('getCroppedCanvas').toDataURL("image/png",1.0);
+
         var data = {};
 		data.img = base64;
-		$.ajax({
-			url: getRealPath()+"mgr/HeadPicUpload",
-			data: data,
-			type: "POST",
-			dataType: 'json',
-			success: function(data) {
-				console.info(data);
-			}
-		});
+		$.post("../../../mgr/HeadPicUpload", {
+    		img : base64
+    	}, function(data) {
+    		console.info(data);
+    	}, 'json');
     });
 
 
