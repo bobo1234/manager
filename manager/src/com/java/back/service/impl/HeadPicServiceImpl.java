@@ -4,19 +4,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.java.back.constant.ClubConst;
-import com.java.back.constant.PageConstant;
 import com.java.back.dao.support.AbstractDao;
 import com.java.back.model.forum.TeHeadpic;
 import com.java.back.service.HeadPicService;
 import com.java.back.support.JSONReturn;
 import com.java.back.utils.DateTimeUtil;
-import com.java.back.utils.PageUtils;
-import com.java.back.utils.StringUtil;
 import com.java.back.utils.fileUtils.FileOperations;
 
 @Service
@@ -25,44 +24,36 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 		HeadPicService {
 
 	@Override
-	public JSONReturn findPicList(int page, String title) {
-		// TODO Auto-generated method stub
-		String hql = getHql + " and title" + StringUtil.formatLike(title);
-		List<TeHeadpic> queryHqlForList = this.queryHqlForList(hql, null, page);
-		if (CollectionUtils.isEmpty(queryHqlForList))
-			return JSONReturn.buildFailure("未获取到数据!");
-		return JSONReturn.buildSuccess(queryHqlForList);
-	}
-
-	@Override
-	public JSONReturn findPicCount(int page, String title) {
-		// TODO Auto-generated method stub
-		String hql = getHql + " and title" + StringUtil.formatLike(title);
-		int count = this.countHqlAll(hql);
-		return JSONReturn.buildSuccess(PageUtils.calculatePage(page, count,
-				PageConstant.PAGE_LIST));
-	}
-
-	@Override
-	public JSONReturn findPicById(long picid) {
+	public TeHeadpic findPicById(long picid) {
 		// TODO Auto-generated method stub
 		TeHeadpic teHeadpic = get(picid);
-		if (teHeadpic==null)
-			return JSONReturn.buildFailure("未获取到数据!");
-		return JSONReturn.buildSuccess(teHeadpic);
+		return teHeadpic;
 	}
 
+	@Transactional
 	@Override
-	public JSONReturn modefyPicById(TeHeadpic headpic) {
+	public JSONReturn modefyPicById(long id, int ifuss) {
 		// TODO Auto-generated method stub
-		return null;
+		TeHeadpic headpic = get(id);
+		headpic.setIfuseless(ifuss);
+		if (ifuss==ClubConst.INVALID) {
+			headpic.setPorder(0);
+		}else {
+			headpic.setPorder(getMaxporder()+1);
+		}
+		boolean update = update(headpic);
+		if (update) {
+			return JSONReturn.buildSuccess("操作成功");
+		}
+		return JSONReturn.buildFailure("操作失败");
 	}
 
 	@Override
 	public JSONReturn addPic(TeHeadpic headpic) {
 		// TODO Auto-generated method stub
-		headpic.setIfuseless(ClubConst.valid);
+		headpic.setIfuseless(ClubConst.VALID);// 默认启用的图片
 		headpic.setCreatetime(DateTimeUtil.getCurrentTime());
+		headpic.setPorder(getMaxporder() + 1);
 		boolean save = this.save(headpic);
 		if (save) {
 			return JSONReturn.buildSuccess("新增成功");
@@ -70,6 +61,34 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 		return JSONReturn.buildFailure("新增失败");
 	}
 
+	/**
+	 * 使用中的最大的顺序
+	 * @return
+	 */
+	private int getMaxporder() {
+		String sql = "select max(porder) from  te_headpic where ifuseless=?";
+		Object uniqueResult = findSession().createSQLQuery(sql)
+				.setInteger(0, ClubConst.VALID).uniqueResult();
+		if (uniqueResult == null) {
+			return 0;
+		}
+		return Integer.parseInt(uniqueResult.toString());
+	}
+
+	/**
+	 * 使用中的最小的顺序
+	 * @return
+	 */
+	private int getMinporder() {
+		String sql = "select min(porder) from  te_headpic where ifuseless=?";
+		Object uniqueResult = findSession().createSQLQuery(sql)
+				.setInteger(0, ClubConst.VALID).uniqueResult();
+		if (uniqueResult == null) {
+			return 0;
+		}
+		return Integer.parseInt(uniqueResult.toString());
+	}
+	
 	@Override
 	public JSONReturn deletePic(long picid, HttpServletRequest request) {
 		// TODO Auto-generated method stub
@@ -85,7 +104,10 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 	@Override
 	public JSONReturn findAllPic() {
 		// TODO Auto-generated method stub
-		List<TeHeadpic> findAll = findAll();
+		List<TeHeadpic> findAll = findSession()
+				.createCriteria(getEntityClass())
+				.add(Restrictions.eq("ifuseless", ClubConst.INVALID))
+				.addOrder(Order.desc("createtime")).list();
 		return JSONReturn.buildSuccess(findAll);
 	}
 
@@ -93,6 +115,44 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 	public Class<TeHeadpic> getEntityClass() {
 		// TODO Auto-generated method stub
 		return TeHeadpic.class;
+	}
+
+	@Transactional
+	@Override
+	public JSONReturn moveHead(long id) {
+		// TODO Auto-generated method stub
+		try {
+			TeHeadpic headpic = get(id);
+			int order = headpic.getPorder();
+			if (order == getMinporder()) {
+				return JSONReturn.buildFailure("已经到头啦");
+			}
+			List<TeHeadpic> list = findSession().createCriteria(getEntityClass())
+					.add(Restrictions.eq("ifuseless", ClubConst.VALID)).add(Restrictions.lt("porder", order)).addOrder(Order.desc("porder")).list();
+			
+			TeHeadpic teHeadpic = list.get(0);
+			int neworder=teHeadpic.getPorder();
+			teHeadpic.setPorder(order);
+			update(teHeadpic);
+
+			headpic.setPorder(neworder);//操作的数据向前移动
+			update(headpic);
+			return JSONReturn.buildSuccess("移动成功");
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return JSONReturn.buildFailure("操作失败");
+	}
+
+	@Override
+	public JSONReturn findUsePic() {
+		// TODO Auto-generated method stub
+		List<TeHeadpic> findAll = findSession()
+				.createCriteria(getEntityClass())
+				.add(Restrictions.eq("ifuseless", ClubConst.VALID))
+				.addOrder(Order.asc("porder")).list();
+		return JSONReturn.buildSuccess(findAll);
 	}
 
 }

@@ -516,6 +516,52 @@ BootstrapDialog.msg = function(message, type) {
 function hidedg() {
 	dg.close();
 }
+
+/**
+ * 加载远程页面
+ */
+BootstrapDialog.loadHtml = function(url) {
+	return BootstrapDialog.show({
+        message: function(dialog) {
+            var $message = $('<div></div>');
+            var pageToLoad = dialog.getData('pageToLoad');
+            $message.load(pageToLoad);
+            return $message;
+        },
+        data: {
+            'pageToLoad': url
+        }
+    });
+};
+
+/**
+ * Success提示框
+ */
+BootstrapDialog.showmsg = function(str, func) {
+    BootstrapDialog.show({
+        type : BootstrapDialog.TYPE_SUCCESS,
+        title : '成功 ',
+        message : str,
+        size : BootstrapDialog.SIZE_SMALL,
+        buttons : [ {
+            label : '确定',
+            action : function(dialogItself) {
+                dialogItself.close();
+            }
+        } ],
+        // 指定时间内可自动关闭
+        onshown : function(dialogRef) {
+            setTimeout(function() {
+                dialogRef.close();
+            }, YUNM._set.timeout);
+        },
+        onhide : func
+    });
+};
+
+/**
+ * 正在提交
+ */
 BootstrapDialog.isSubmitted = function() {
 	return BootstrapDialog.show({
 		title : "正在提交",
@@ -523,6 +569,21 @@ BootstrapDialog.isSubmitted = function() {
 		message : "请稍等, 正在提交请求!"
 	});
 };
+
+/**
+ * 正在处理
+ */
+BootstrapDialog.onloading = function() {
+	return BootstrapDialog.show({
+		title : "正在处理",
+		closable : false,
+		message : "<div>正在处理<img src='../images/load.gif'/></div>"
+	});
+};
+
+/**
+ * 正在加载
+ */
 BootstrapDialog.loading = function() {
 	return BootstrapDialog.show({
 		title : "加载中",
@@ -530,15 +591,18 @@ BootstrapDialog.loading = function() {
 		message : "正在加载, 请稍等..."
 	});
 };
+
 BootstrapDialog.hideModel = function(eml) {
 	eml.modal('hide');
 };
+
 BootstrapDialog.showModel = function(eml) {
 	eml.modal({
 		backdrop : 'static',
 		keyboard : false
 	}).modal('show');
 };
+
 (function($) {
 	// 获取传递的参数
 	$.getUrlParam = function(name) {

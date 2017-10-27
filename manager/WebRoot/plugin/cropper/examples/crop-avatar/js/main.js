@@ -210,7 +210,7 @@
 						this.$img.cropper({
 							aspectRatio : 4 / 3,
 							preview : this.$avatarPreview.selector,
-							strict : false,
+							strict : true,//canvas不能小于容器，剪裁容器不能在canvas之外。
 							crop : function(data) {
 								var json = [ '{"x":' + data.x, '"y":' + data.y,
 										'"height":' + data.height,

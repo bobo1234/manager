@@ -94,10 +94,10 @@ public class ClubConst {
 	/**
 	 * 有效 or 可用
 	 */
-	public static final int valid=0;
+	public static final int VALID=0;
 	
 	/**
 	 * 无效 or 作废
 	 */
-	public static final int invalid=1;
+	public static final int INVALID=1;
 }

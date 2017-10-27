@@ -9,6 +9,7 @@
 <link type="text/css" rel="stylesheet" href="../css/commone.css" />
 <link type="text/css" rel="stylesheet"
 	href="../js/plugins/kindeditor-4.1.10/themes/default/default.css" />
+<link href="../css/pic.css" rel="stylesheet">
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap-dialog.min.js"></script>
@@ -20,14 +21,11 @@
 <link href="../plugin/cropper/dist/cropper.min.css" rel="stylesheet">
 <link href="../plugin/cropper/examples/crop-avatar/css/main.css"
 	rel="stylesheet">
-<!-- <script type="text/javascript"
-	src="../plugin/cropper/dist/cropper.min.js"></script> -->
-	
-	<script type="text/javascript"
-	src="../plugin/cropper/dist/cropper.js"></script>
+<script type="text/javascript" src="../plugin/cropper/dist/cropper.js"></script>
 <script type="text/javascript"
 	src="../plugin/cropper/examples/crop-avatar/js/main.js"></script>
 <script type="text/javascript" src="./js/headpic.js"></script>
+
 <!--[if lt IE 9]>
             <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -37,7 +35,7 @@
 <body>
 	<div class="nav navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a href="./index.html" class="navbar-brand"><span
+			<a href="../index.html" class="navbar-brand"><span
 				class="glyphicon glyphicon-home"></span>&nbsp;首页</a>
 			<ul class="nav navbar-nav" id="nav-box-ul"></ul>
 			<ul class="nav navbar-nav pull-right">
@@ -63,14 +61,21 @@
 					<div class="input-group"></div>
 					<!-- /input-group -->
 				</div>
-				<div class="col-lg-2"></div>
-				<div class="col-lg-2"></div>
+				<div class="col-lg-10">
+				<button type="button" class="btn btn-primary add-btn" data-toggle="modal"
+					data-target="#avatar-modal" style="margin: 10px;">
+					<span class="glyphicon glyphicon-plus"></span>
+					上传图片</button>
+				<button type="button" class="btn btn-primary his-btn" style="margin: 10px;" onclick="window.open('historypic.html')">
+					<span class="glyphicon glyphicon-time"></span>
+					历史图片</button>
+					
+				</div>
 			</div>
-
+	<div class="row imglist">
+	</div>		
+				
 			<div class="container" id="crop-avatar">
-				<button type="button" class="btn btn-primary" data-toggle="modal"
-					data-target="#avatar-modal" style="margin: 10px;">修改头像</button>
-
 				<div class="modal fade" id="avatar-modal" aria-hidden="true"
 					aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
 					<div class="modal-dialog modal-lg">
@@ -104,10 +109,9 @@
 											</div>
 											<div class="col-md-3">
 												<div class="avatar-preview preview-lg"></div>
-												<br/>
-												<br/>
+												<br /> <br />
 												<div class="form-group">
-												<input class="form-control addtitle" placeholder="填写图片说明"></input>
+													<input class="form-control addtitle" placeholder="填写图片说明"></input>
 												</div>
 											</div>
 										</div>
@@ -119,11 +123,11 @@
 														data-option="-90" type="button" title="Rotate -90 degrees">Rotate
 														Left</button>
 													<button class="btn btn-primary" data-method="reset"
-														data-option="reset" type="button" title="Rotate reset degrees">
-														reset</button>
+														data-option="reset" type="button"
+														title="Rotate reset degrees">reset</button>
 													<button class="btn btn-primary" data-method="destroy"
-														data-option="destroy" type="button" title="Rotate reset degrees">
-														destroy</button>
+														data-option="destroy" type="button"
+														title="Rotate reset degrees">destroy</button>
 													<button class="btn btn-primary" data-method="rotate"
 														data-option="-15" type="button">-15deg</button>
 													<button class="btn btn-primary" data-method="rotate"
@@ -141,20 +145,23 @@
 														data-option="30" type="button">30deg</button>
 													<button class="btn btn-primary" data-method="rotate"
 														data-option="45" type="button">45deg</button>
-													<button class="btn btn-primary" data-method="setAspectRatio"
+													<button class="btn btn-primary"
+														data-method="setAspectRatio"
 														data-option="1.7777777777777777" type="button">16:9</button>
-													<button class="btn btn-primary" data-method="setAspectRatio"
+													<button class="btn btn-primary"
+														data-method="setAspectRatio"
 														data-option="1.3333333333333333" type="button">4:3</button>
-													<button class="btn btn-primary" data-method="setAspectRatio"
-														data-option="1" type="button">1:1</button>
-													<button class="btn btn-primary" data-method="setAspectRatio"
-														data-option="NaN" type="button" title="free">
-														free</button>
+													<button class="btn btn-primary"
+														data-method="setAspectRatio" data-option="1" type="button">1:1</button>
+													<button class="btn btn-primary"
+														data-method="setAspectRatio" data-option="NaN"
+														type="button" title="free">free</button>
 												</div>
 											</div>
 											<div class="col-md-3">
-												<button class="btn btn-primary btn-block avatar-save" data-method="getCropBoxData" data-option="" data-target="#putData"
-													type="button">上传</button>
+												<button class="btn btn-primary btn-block avatar-save"
+													data-method="getCropBoxData" data-option=""
+													data-target="#putData" type="button">上传</button>
 											</div>
 										</div>
 									</div>
@@ -168,66 +175,6 @@
 				</div>
 			</div>
 			<div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
-
-		</div>
-	</div>
-
-	<div class="modal fade modify-box sm-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">编辑部门信息</h4>
-				</div>
-				<div class="modal-body">
-					<input type="text" class="form-control modifyName"
-						placeholder="部门名称" maxlength="64" value="" />
-					<textarea class="form-control modifyDesc margin-top-15 resize"
-						rows="3" placeholder="部门简介" maxlength="128"></textarea>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary modifyBtn">修改</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade add-box sm-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">添加部门信息</h4>
-				</div>
-				<div class="modal-body">
-					<input type="text" class="form-control addName" placeholder="部门名称"
-						maxlength="64" value="" />
-					<textarea class="form-control addDesc margin-top-15 resize"
-						rows="3" placeholder="部门简介" maxlength="128"></textarea>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary"
-						onclick="addDepartment()">添加</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade set-principal-box sm-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">设置部门经理</h4>
-				</div>
-				<div class="modal-body">
-					<select class="principal-list form-control"></select>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary"
-						onclick="setPrincipal()">设置</button>
-				</div>
-			</div>
 		</div>
 	</div>
 
@@ -238,6 +185,7 @@
 			<div class="modal-content"></div>
 		</div>
 	</div>
+	
 
 </body>
 </html>

@@ -2,11 +2,9 @@
  * 页面初始化加载的方法
  */
 function initFun() {
-
 	if (secure.find) {
 		dialog = BootstrapDialog.loading();
-		dialog.close();
-		// findListInfo();
+		findListInfo();
 	}
 	if (!secure.add) {
 		$('button.add-btn').remove();
@@ -24,7 +22,7 @@ function initFun() {
  */
 function uploadPic(base64, url) {
 	var title=$('input.addtitle').val();
-	dialog = BootstrapDialog.isSubmitted();
+	dialog = BootstrapDialog.onloading();
 	$.post(url, {
 		img : base64,
 		title:title
@@ -36,73 +34,75 @@ function uploadPic(base64, url) {
 		}
 		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
 		$('#avatar-modal').modal('hide');
+		findListInfo();
 	}, 'json');
 }
 /**
- * 显示上传图片的窗口
+ * 显示操作历史图片的窗口
  */
-function showAddBox() {
-	$('.empty').removeClass('empty');
-	$('input.addRoleName').val('');
-	$('textarea.addRoleDesc').val('');
-	BootstrapDialog.showModel($('div.add-box'));
+function showAddBox(id) {
+	if (!id) return;
+	alert(id);
+	dialog = BootstrapDialog.loading();
+	BootstrapDialog.showModel($('div.set-principal-box'));
 }
 
-/*
- * 获取部门列表
- * 
+/**
+ * 所有启用的图片
  */
 function findListInfo() {
-	$.post('mgr/findHeadPic', function(data) {
+	$.post(localhostUrl+'mgr/findUsePic',function(data) {
 		dialog.close();
-		var tbody = $('tbody.tbody').empty();
 		if (!$.isSuccess(data))
 			return;
+		var tbody = $('.imglist').empty();
 		$.each(data.body, function(i, v) {
-			$('<tr></tr>').append($('<td></td>').append(v.deptId)).append(
-					$('<td></td>').append(v.deptName)).append(
-					$('<td></td>').append(v.time)).append(
-					$('<td></td>').append(v.creator)).append(
-					$('<td></td>').append(v.fullName)).append(
-					$('<td></td>').append(v.deptDescription)).append(
-					$('<td></td>').append(analyzeBtns(v))).appendTo(tbody);
+			$('<div class="col-sm-6 col-md-2"> </div>')
+			.append($('<div class="thumbnail">').append($('<img style="width:170px;height:150px" src='+localhostUrl+v.picurl+' />'))
+			.append($("<div class='caption'> </div>").append("<p>"+v.title+"</p>")
+			.append($("<p></p>").append('<a href="java:void(0)" class="btn btn-primary" onclick="move2head('+v.id+')" role="button">'+' <span class="glyphicon glyphicon-arrow-left"></span>前移')
+			.append('&nbsp;&nbsp;<a href="java:void(0)" class="btn btn-default" onclick="updatepic('+v.id+')" role="button">'+' <span class="glyphicon glyphicon-minus-sign"></span>作废')	
+			)		
+			)
+			)
+			.appendTo(tbody);
 		});
 	}, 'json');
-
-}
-/*
- * 分析操作按钮
- * 
- */
-function analyzeBtns(v) {
-	var btns = "";
-	btns += secure.modify ? "<button type='button' class='btn btn-primary btn-xs' onclick='showModifyBox("
-			+ v.deptId
-			+ ")'><span class='glyphicon glyphicon-pencil'></span>编辑</button>"
-			: "";
-	btns += secure.del ? "<button type='button' class='btn btn-danger btn-xs' onclick='hintDelete("
-			+ v.deptId
-			+ ")'><span class='glyphicon glyphicon-remove'></span>删除</button>"
-			: "";
-	return btns;
 }
 
-/*
- * 提示并确定删除部门信息
- * 
+/**
+ * 前移
+ * @param id
  */
-function hintDelete(id) {
+function move2head(id) {
+	$.post(localhostUrl+'mgr/moveHead', {
+		picid : id
+	}, function(data) {
+		dialog.close();
+		if (!$.isSuccess(data))
+			return;
+//		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
+		findListInfo();
+	}, 'json');
+}
+
+/**
+ * 提示并确定作废图片
+ * @param id
+ */
+function updatepic(id) {
 	if (!id)
 		return;
 	BootstrapDialog
 			.confirm(
-					"请确认是否要删除该部门?<br /><span class='placeholder'>PS: 同时会删除该部门下的所有职位!</span>",
+					"请确认是否要作废该图片?",
 					function(result) {
 						if (!result)
 							return;
 						dialog = BootstrapDialog.isSubmitted();
-						$.getJSON('mgr/department/deleteDepartment', {
-							deptId : id
+						$.getJSON(localhostUrl+'mgr/updatepic', {
+							picid : id,
+							ifuss : 1,
 						}, function(data) {
 							dialog.close();
 							if (!$.isSuccess(data))
@@ -114,6 +114,7 @@ function hintDelete(id) {
 					});
 }
 
+
 /*
  * 显示部门添加窗口
  * 
@@ -123,6 +124,30 @@ function showAddBox() {
 	$('input.addName').val('');
 	$('textarea.addDesc').val('');
 	BootstrapDialog.showModel($('div.add-box'));
+}
+
+
+/*
+ * 显示编辑窗口 
+ *  
+ */
+function showModifyBox(picId) {
+	$('.empty').removeClass('empty');
+	if (!picId) return;
+	dialog = BootstrapDialog.loading();
+	$('input.modifyName').val("");
+	$('textarea.modifyDesc').val("");
+	$.getJSON('mgr/findPicById', {picid : picId}, function(data) {
+		dialog.close();
+		if (!$.isSuccess(data)) return;
+		$('input.modifyName').val(data.body.deptName);
+		$('textarea.modifyDesc').val(data.body.deptDescription);
+		$('button.modifyBtn').attr('onclick', 'modifyDept(' + data.body.deptId + ')');
+		$('div.modify-box').modal({
+			closable : false,
+			show : true
+		});
+	});
 }
 /*
  * 添加部门信息
