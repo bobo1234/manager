@@ -69,8 +69,8 @@ public class HeadpicController extends AbstractController {
 	 */
 	@RequestMapping("findAllPic")
 	@ResponseBody
-	public JSONReturn findAllPic() {
-		return headPicService.findAllPic();
+	public JSONReturn findAllPic(String title) {
+		return headPicService.findAllPic(title);
 	}
 	
 	/**

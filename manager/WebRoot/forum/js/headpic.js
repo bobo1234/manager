@@ -37,15 +37,47 @@ function uploadPic(base64, url) {
 		findListInfo();
 	}, 'json');
 }
+
 /**
- * 显示操作历史图片的窗口
+ * 显示未启用的图片列表
  */
-function showAddBox(id) {
-	if (!id) return;
-	alert(id);
-	dialog = BootstrapDialog.loading();
-	BootstrapDialog.showModel($('div.set-principal-box'));
+function showAddEmplBox() {
+	var search = $('input.search-val').val();
+	$.post(localhostUrl + 'mgr/findAllPic', {
+		title : search
+	}, function(data){
+		var body = $('tbody.empl-list-tboal').empty();
+		if(!$.isSuccess(data)) return;
+		$.each(data.body, function(i,v){
+			$('<tr></tr>')
+			.append($('<td></td>').append(v.id))
+			.append($('<td></td>').append(v.title))
+			.append($('<td></td>').append(analyzeAddTrainingBtns(v)))
+			.appendTo(body);
+		});
+	}, 'JSON');
+	BootstrapDialog.showModel($('div.add-empl-box'));
 }
+
+/*
+ * 解析操作按钮
+ * 
+ */
+function analyzeAddTrainingBtns(v){
+	var btns = "";
+	btns += "<button type='button' class='btn btn-success btn-xs' onclick='addTrainingByEmplId("+v.id+", this)'><span class='glyphicon glyphicon-plus'></span>启用</button>" ;
+	btns += "&nbsp; <button type='button' class='btn btn-danger btn-xs' onclick='addTrainingByEmplId("+v.id+", this)'><span class='glyphicon glyphicon-minus'></span>删除</button>" ;
+	return btns;
+}
+
+
+/**
+ * 关闭窗口
+ */
+function closeEmplListBox(){
+	BootstrapDialog.hideModel($('div.add-empl-box'));
+}
+
 
 /**
  * 所有启用的图片
@@ -72,6 +104,7 @@ function findListInfo() {
 
 /**
  * 前移
+ * 
  * @param id
  */
 function move2head(id) {
@@ -81,13 +114,14 @@ function move2head(id) {
 		dialog.close();
 		if (!$.isSuccess(data))
 			return;
-//		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
+// BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
 		findListInfo();
 	}, 'json');
 }
 
 /**
  * 提示并确定作废图片
+ * 
  * @param id
  */
 function updatepic(id) {
@@ -116,20 +150,8 @@ function updatepic(id) {
 
 
 /*
- * 显示部门添加窗口
+ * 显示编辑窗口
  * 
- */
-function showAddBox() {
-	$('.empty').removeClass('empty');
-	$('input.addName').val('');
-	$('textarea.addDesc').val('');
-	BootstrapDialog.showModel($('div.add-box'));
-}
-
-
-/*
- * 显示编辑窗口 
- *  
  */
 function showModifyBox(picId) {
 	$('.empty').removeClass('empty');
@@ -149,6 +171,7 @@ function showModifyBox(picId) {
 		});
 	});
 }
+
 /*
  * 添加部门信息
  * 

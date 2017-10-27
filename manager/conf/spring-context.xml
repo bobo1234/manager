@@ -89,6 +89,15 @@
 	<tx:annotation-driven transaction-manager="txManager" />
 	
 	
+	 <!-- 事务通知 -->
+     <!-- propagation配置传播行为，isolation配置隔离方式，表示在方法存在事务的时候直接使用，
+     	不存在则创建一个新事务，隔离级别为一个事务可以读取另外一个已提交事务的内容， -->
+    <!-- <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+        </tx:attributes>
+    </tx:advice> -->
+	
 	 <!-- <tx:advice id="txAdvice" transaction-manager="txManager">
         <tx:attributes>
             <tx:method name="save*" propagation="REQUIRED" />

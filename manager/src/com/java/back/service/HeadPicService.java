@@ -25,7 +25,7 @@ public abstract interface HeadPicService {
 	 * 未启用的图片列表
 	 * @return
 	 */
-	public abstract JSONReturn findAllPic();
+	public abstract JSONReturn findAllPic(String title);
 	/**
 	 * 前移一位
 	 * @param id

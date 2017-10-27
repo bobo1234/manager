@@ -66,9 +66,9 @@
 					data-target="#avatar-modal" style="margin: 10px;">
 					<span class="glyphicon glyphicon-plus"></span>
 					上传图片</button>
-				<button type="button" class="btn btn-primary his-btn" style="margin: 10px;" onclick="window.open('historypic.html')">
+				<button type="button" class="btn btn-primary his-btn" style="margin: 10px;" onclick="showAddEmplBox()">
 					<span class="glyphicon glyphicon-time"></span>
-					历史图片</button>
+				 未启用图片</button>
 					
 				</div>
 			</div>
@@ -185,6 +185,33 @@
 			<div class="modal-content"></div>
 		</div>
 	</div>
+	
+	
+	  <div class="modal fade add-empl-box bs-example-modal-lg">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header"><h4 class="modal-title">图片列表</h4></div>
+					<div class="modal-body" style="max-height:450px; overflow-y:auto;">
+						<div class="tool">
+							<div class="input-group float-left">
+								<input type="text" class="form-control search-val" style="width:350px;" placeholder="请输标题" maxlength="64" />
+								<button class="btn btn-primary float-right" type="button" onclick="showAddEmplBox()"><span class="glyphicon glyphicon-search"></span>搜索</button>
+							</div><!-- /input-group -->
+							<div class="clear"></div>
+						</div>
+						<table class="table table-bordered table-hover margin-top-15">
+							<tbody class="empl-list-tboal"></tbody>
+							
+							
+						</table>
+					</div> 
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" onclick="closeEmplListBox()">关闭</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	
 	
 
 </body>

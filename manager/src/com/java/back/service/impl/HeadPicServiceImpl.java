@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import com.java.back.model.forum.TeHeadpic;
 import com.java.back.service.HeadPicService;
 import com.java.back.support.JSONReturn;
 import com.java.back.utils.DateTimeUtil;
+import com.java.back.utils.StringUtil;
 import com.java.back.utils.fileUtils.FileOperations;
 
 @Service
@@ -36,10 +39,15 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 		// TODO Auto-generated method stub
 		TeHeadpic headpic = get(id);
 		headpic.setIfuseless(ifuss);
-		if (ifuss==ClubConst.INVALID) {
+		if (ifuss == ClubConst.INVALID) {// 作废
 			headpic.setPorder(0);
-		}else {
-			headpic.setPorder(getMaxporder()+1);
+		} else {// 启用
+			int countAll = countAll("select count(*) from te_headpic where ifuseless="
+					+ ClubConst.VALID);
+			if (countAll > 5) {
+				return JSONReturn.buildFailure("操作失败,只能设置5张图片");
+			}
+			headpic.setPorder(getMaxporder() + 1);
 		}
 		boolean update = update(headpic);
 		if (update) {
@@ -51,18 +59,19 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 	@Override
 	public JSONReturn addPic(TeHeadpic headpic) {
 		// TODO Auto-generated method stub
-		headpic.setIfuseless(ClubConst.VALID);// 默认启用的图片
+		headpic.setIfuseless(ClubConst.INVALID);// 默认不启用的图片
 		headpic.setCreatetime(DateTimeUtil.getCurrentTime());
 		headpic.setPorder(getMaxporder() + 1);
 		boolean save = this.save(headpic);
 		if (save) {
-			return JSONReturn.buildSuccess("新增成功");
+			return JSONReturn.buildSuccess("新增成功,若使用请启用该图片");
 		}
 		return JSONReturn.buildFailure("新增失败");
 	}
 
 	/**
 	 * 使用中的最大的顺序
+	 * 
 	 * @return
 	 */
 	private int getMaxporder() {
@@ -77,6 +86,7 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 
 	/**
 	 * 使用中的最小的顺序
+	 * 
 	 * @return
 	 */
 	private int getMinporder() {
@@ -88,7 +98,7 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 		}
 		return Integer.parseInt(uniqueResult.toString());
 	}
-	
+
 	@Override
 	public JSONReturn deletePic(long picid, HttpServletRequest request) {
 		// TODO Auto-generated method stub
@@ -102,10 +112,13 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 	}
 
 	@Override
-	public JSONReturn findAllPic() {
+	public JSONReturn findAllPic(String title) {
 		// TODO Auto-generated method stub
-		List<TeHeadpic> findAll = findSession()
-				.createCriteria(getEntityClass())
+		Criteria criteria = findSession().createCriteria(getEntityClass());
+		if (StringUtil.isNotEmpty(title)) {
+			criteria.add(Restrictions.like("title", title, MatchMode.ANYWHERE));
+		}
+		List<TeHeadpic> findAll = criteria
 				.add(Restrictions.eq("ifuseless", ClubConst.INVALID))
 				.addOrder(Order.desc("createtime")).list();
 		return JSONReturn.buildSuccess(findAll);
@@ -127,15 +140,18 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 			if (order == getMinporder()) {
 				return JSONReturn.buildFailure("已经到头啦");
 			}
-			List<TeHeadpic> list = findSession().createCriteria(getEntityClass())
-					.add(Restrictions.eq("ifuseless", ClubConst.VALID)).add(Restrictions.lt("porder", order)).addOrder(Order.desc("porder")).list();
-			
+			List<TeHeadpic> list = findSession()
+					.createCriteria(getEntityClass())
+					.add(Restrictions.eq("ifuseless", ClubConst.VALID))
+					.add(Restrictions.lt("porder", order))
+					.addOrder(Order.desc("porder")).list();
+
 			TeHeadpic teHeadpic = list.get(0);
-			int neworder=teHeadpic.getPorder();
+			int neworder = teHeadpic.getPorder();
 			teHeadpic.setPorder(order);
 			update(teHeadpic);
 
-			headpic.setPorder(neworder);//操作的数据向前移动
+			headpic.setPorder(neworder);// 操作的数据向前移动
 			update(headpic);
 			return JSONReturn.buildSuccess("移动成功");
 		} catch (HibernateException e) {
