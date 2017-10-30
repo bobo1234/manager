@@ -15,7 +15,7 @@ function initFun() {
 }
 
 /**
- * 图片接口
+ * 图片上传接口
  * 
  * @param base64
  * @param url
@@ -52,6 +52,7 @@ function showAddEmplBox() {
 			$('<tr></tr>')
 			.append($('<td></td>').append(v.id))
 			.append($('<td></td>').append(v.title))
+			.append($('<td></td>').append($('<a><img  class="hispic" style="width:40px;height:40px" src='+localhostUrl+v.picurl+' /></a>')))
 			.append($('<td></td>').append(analyzeAddTrainingBtns(v)))
 			.appendTo(body);
 		});
@@ -59,15 +60,78 @@ function showAddEmplBox() {
 	BootstrapDialog.showModel($('div.add-empl-box'));
 }
 
-/*
+/**
  * 解析操作按钮
- * 
+ * @param v
+ * @returns {String}
  */
 function analyzeAddTrainingBtns(v){
 	var btns = "";
-	btns += "<button type='button' class='btn btn-success btn-xs' onclick='addTrainingByEmplId("+v.id+", this)'><span class='glyphicon glyphicon-plus'></span>启用</button>" ;
-	btns += "&nbsp; <button type='button' class='btn btn-danger btn-xs' onclick='addTrainingByEmplId("+v.id+", this)'><span class='glyphicon glyphicon-minus'></span>删除</button>" ;
+	btns += "<button type='button' class='btn btn-success btn-xs' onclick='startuse("+v.id+")'><span class='glyphicon glyphicon-plus'></span>启用</button>" ;
+	btns += "&nbsp; <button type='button' class='btn btn-danger btn-xs' onclick='delthis("+v.id+")'><span class='glyphicon glyphicon-minus'></span>删除</button>" ;
 	return btns;
+}
+
+$(function() {
+	$("body").delegate(".hispic", "mouseover", function (e) {
+		var s=$(this).attr("src");
+		$(this).parent().append("<p id='pic'><img src='"+s+"' id='pic1'></p>");
+		   $("#pic").css({
+	             "top":"20px",
+	             "left":"450px"
+//	             "top":(e.pageY-200)+"px",
+//	             "left":(e.pageX-10)+"px"
+	         }).fadeIn("fast");
+	});
+	
+	$("body").delegate(".hispic", "mouseout", function () {
+		 $("#pic").remove();
+	});
+	
+})
+
+/**
+ * 启用历史图片
+ * @param id
+ */
+function startuse(id) {
+	BootstrapDialog.confirm("请确认此操作?", function(result) {
+		if (!result)
+			return;
+	$.post(localhostUrl+'mgr/updatepic', {
+		picid : id,
+		ifuss : 0
+	}, function(data) {
+		dialog.close();
+		if (!$.isSuccess(data))
+			return;
+		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
+		showAddEmplBox();
+		findListInfo();
+	}, 'json');
+	});
+}
+
+/**
+ * 删除
+ * @param id
+ */
+function delthis(id) {
+	if (!id)
+		return;
+	BootstrapDialog.confirm("请确认是否删除该图片", function(result) {
+		if (!result)
+			return;
+	$.post(localhostUrl+'mgr/delPic', {
+		picid : id
+	}, function(data) {
+		dialog.close();
+		if (!$.isSuccess(data))
+			return;
+		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
+		showAddEmplBox();
+	}, 'json');
+});
 }
 
 
@@ -103,7 +167,7 @@ function findListInfo() {
 }
 
 /**
- * 前移
+ * 图片前移
  * 
  * @param id
  */
@@ -172,26 +236,3 @@ function showModifyBox(picId) {
 	});
 }
 
-/*
- * 添加部门信息
- * 
- */
-function addDepartment() {
-	$.isSubmit = true;
-	dept.deptName = $.verifyForm($('input.addName'), true);
-	dept.deptDesc = $.verifyForm($('textarea.addDesc'), false);
-	if (!$.isSubmit)
-		return;
-	dialog = BootstrapDialog.isSubmitted();
-	$.post('mgr/department/addDepartment', {
-		name : dept.deptName,
-		desc : dept.deptDesc
-	}, function(data) {
-		dialog.close();
-		if (!$.isSuccess(data))
-			return;
-		BootstrapDialog.hideModel($('div.add-box'));
-		BootstrapDialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
-		findListInfo();
-	}, 'json');
-}

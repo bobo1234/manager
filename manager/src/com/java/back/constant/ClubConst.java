@@ -76,7 +76,7 @@ public class ClubConst {
 	
 	
 	/**
-	 * 根据 消费情况判断会员等级
+	 * 根据 消费情况判断会员等级(暂定)
 	 * @param money
 	 * @return
 	 */

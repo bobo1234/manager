@@ -38,17 +38,17 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 	public JSONReturn modefyPicById(long id, int ifuss) {
 		// TODO Auto-generated method stub
 		TeHeadpic headpic = get(id);
-		headpic.setIfuseless(ifuss);
 		if (ifuss == ClubConst.INVALID) {// 作废
 			headpic.setPorder(0);
 		} else {// 启用
 			int countAll = countAll("select count(*) from te_headpic where ifuseless="
 					+ ClubConst.VALID);
-			if (countAll > 5) {
+			if (countAll > 4) {
 				return JSONReturn.buildFailure("操作失败,只能设置5张图片");
 			}
 			headpic.setPorder(getMaxporder() + 1);
 		}
+		headpic.setIfuseless(ifuss);
 		boolean update = update(headpic);
 		if (update) {
 			return JSONReturn.buildSuccess("操作成功");
@@ -102,11 +102,11 @@ public class HeadPicServiceImpl extends AbstractDao<TeHeadpic> implements
 	@Override
 	public JSONReturn deletePic(long picid, HttpServletRequest request) {
 		// TODO Auto-generated method stub
-		int deleteByProperty = deleteByProperty("id", picid);
 		TeHeadpic teHeadpic = get(picid);
 		String rootPath = request.getSession().getServletContext()
 				.getRealPath("");
 		FileOperations.delefile(rootPath, teHeadpic.getPicurl());
+		int deleteByProperty = deleteByProperty("id", picid);
 		return deleteByProperty > 0 ? JSONReturn.buildSuccess("删除成功")
 				: JSONReturn.buildFailure("删除失败");
 	}

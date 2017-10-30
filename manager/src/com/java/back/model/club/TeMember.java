@@ -35,9 +35,9 @@ public class TeMember extends BaseBean {
 	 */
 	private String realname;
 	/**
-	 * 状态等级
+	 * 状态
 	 */
-	private int rank;
+	private int status;
 	/**
 	 * 创建时间
 	 */
@@ -95,12 +95,12 @@ public class TeMember extends BaseBean {
 		this.realname = realname;
 	}
 
-	public int getRank() {
-		return rank;
+	public int getStatus() {
+		return status;
 	}
 
-	public void setRank(int rank) {
-		this.rank = rank;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public Date getCreatetime() {

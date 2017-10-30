@@ -95,7 +95,9 @@ public class SecureValidInterceptor extends HandlerInterceptorAdapter {
 			systemLog.setMethod(handlerMethod.getMethod().getName());
 			systemLog.setDescription(secureValid.desc());
 			systemLog.setLogType(secureValid.type().getId());// 操作类型
-			systemLog.setParams(JsonUtil.mapTojson(req.getParameterMap()));
+			if (!handlerMethod.getMethod().getName().toUpperCase().contains("LOGIN")) {//不是登录接口时候记录
+				systemLog.setParams(JsonUtil.mapTojson(req.getParameterMap()));
+			}
 			systemLog.setCreateByUserName(userName);
 			String address = Common.getIpAddress(req);
 			systemLog.setRequestIp(address);

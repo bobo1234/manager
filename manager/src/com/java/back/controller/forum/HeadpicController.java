@@ -45,7 +45,7 @@ public class HeadpicController extends AbstractController {
 		// img.length()), "222.jpg",request);
 		String rootPath = request.getSession().getServletContext()
 				.getRealPath("");
-		String bm = "/upload/img/"
+		String bm = "upload/img/"
 				+ DateTimeUtil.conversionTime(new Date(), "yyyyMMddHHmmss")
 				+ ".jpg";
 		String extensionName = rootPath + bm;
